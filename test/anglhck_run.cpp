@@ -58,10 +58,10 @@ int main(int argc, char** argv)
 
 void run(std::string const& scriptFile)
 {
-  std::cout << "Creating engine" << std::endl;
+  std::cout << "-- Creating engine" << std::endl;
   asIScriptEngine* engine = asCreateScriptEngine(ANGELSCRIPT_VERSION);
 
-  std::cout << "Registering objects and functions" << std::endl;
+  std::cout << "-- Registering objects and functions" << std::endl;
   anglhck::registerToEngine(engine);
 
   RegisterStdString(engine);
@@ -69,23 +69,23 @@ void run(std::string const& scriptFile)
   engine->RegisterGlobalFunction("double time()", asFUNCTION(currentTime), asCALL_CDECL);
   engine->RegisterGlobalFunction("void swap()", asFUNCTION(swap), asCALL_CDECL);
 
-  std::cout << "Loading script" << std::endl;
+  std::cout << "-- Loading script" << std::endl;
   CScriptBuilder builder;
   builder.StartNewModule(engine, "MyModule");
   if(builder.AddSectionFromFile(scriptFile.data()) < 0)
   {
-    std::cerr << "Error loading script " << scriptFile << std::endl;
+    std::cerr << "-!- Error loading script " << scriptFile << std::endl;
     return;
   }
   builder.BuildModule();
   asIScriptModule *mod = engine->GetModule("MyModule");
   asIScriptFunction *func = mod->GetFunctionByDecl("void main()");
 
-  std::cout << "Creating context" << std::endl;
+  std::cout << "-- Creating context" << std::endl;
   asIScriptContext *ctx = engine->CreateContext();
   ctx->Prepare(func);
 
-  std::cout << "Running script" << std::endl;
+  std::cout << "-- Running script" << std::endl << std::endl;
   int ret = ctx->Execute();
 
   if( ret == asEXECUTION_EXCEPTION )
