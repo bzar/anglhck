@@ -1,0 +1,3 @@
+[submodule "lib/glhck"]
+	path = lib/glhck
+	url = https://github.com/Cloudef/glhck.git
