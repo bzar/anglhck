@@ -1,9 +1,9 @@
 void main()
 {
-  Cube cube;
+  Object@ cube = createCube(1);
   Camera camera;
   
-  camera.object.position(25, 25, 50);
+  camera.object.setPosition(25, 25, 50);
   camera.object.target(0, 0, 0);
   camera.update();
   
@@ -11,9 +11,11 @@ void main()
   double current = time();
   do
   {
-    cube.rotation(0, current * 360, 0);
+    float t = current - start;
+    cube.yRotation = t * 360;
+    cube.xScale = 1 + 15 * t / 5;
     cube.draw();
     render();
     current = time();
-  } while(current < 5);
+  } while(current - start < 5);
 }

@@ -81,10 +81,21 @@ void run(std::string const& scriptFile)
 
   std::cout << "-- Running script" << std::endl << std::endl;
   int ret = ctx->Execute();
-
-  if( ret == asEXECUTION_EXCEPTION )
-  {
-    std::cout << ctx->GetExceptionString() << std::endl;
+  switch (ret) {
+  case asEXECUTION_FINISHED:
+    break;
+  case asEXECUTION_EXCEPTION:
+    std::cout << "-!- Uncaught exception: " << ctx->GetExceptionString() << std::endl;
+    break;
+  case asEXECUTION_ABORTED:
+    std::cout << "-!- Execution aborted" << std::endl;
+    break;
+  case asEXECUTION_ERROR:
+    std::cout << "-!- Error running script" << std::endl;
+    break;
+  default:
+    std::cout << "-!- Error code: " << ret << std::endl;
+    break;
   }
 }
 

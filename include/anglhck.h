@@ -3,5 +3,5 @@
 
 namespace anglhck
 {
-int registerToEngine(asIScriptEngine* engine);
+  int registerToEngine(asIScriptEngine* engine);
 }
