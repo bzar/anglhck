@@ -45,12 +45,6 @@ int main(int argc, char** argv)
   if (!glhckDisplayCreate(WIDTH, HEIGHT, GLHCK_RENDER_AUTO))
      return EXIT_FAILURE;
 
-  glhckCamera* camera = glhckCameraNew();
-  glhckObjectPositionf(glhckCameraGetObject(camera), 25, 25, 50);
-  glhckObjectTargetf(glhckCameraGetObject(camera), 0, 0, 0);
-  glhckCameraRange(camera, 1.0f, 1000.0f);
-  glhckCameraUpdate(camera);
-
   run(scriptFile);
 
   return 0;
@@ -67,7 +61,7 @@ void run(std::string const& scriptFile)
   RegisterStdString(engine);
   engine->RegisterGlobalFunction("void print(const string &in)", asFUNCTION(print), asCALL_CDECL);
   engine->RegisterGlobalFunction("double time()", asFUNCTION(currentTime), asCALL_CDECL);
-  engine->RegisterGlobalFunction("void swap()", asFUNCTION(swap), asCALL_CDECL);
+  engine->RegisterGlobalFunction("void render()", asFUNCTION(swap), asCALL_CDECL);
 
   std::cout << "-- Loading script" << std::endl;
   CScriptBuilder builder;
