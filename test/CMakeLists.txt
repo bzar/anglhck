@@ -31,3 +31,4 @@ target_link_libraries(anglhck_run anglhck glfw ${GLFW_LIBRARIES})
 
 file(COPY scripts DESTINATION .)
 file(COPY textures DESTINATION .)
+file(COPY models DESTINATION .)

@@ -5,6 +5,7 @@
 namespace
 {
   glhckTexture* createTexture(std::string const& filename, const unsigned int importFlags, const glhckTextureParameters &parameters);
+  glhckObject* createModel(std::string const& filename, float const size, const unsigned int importFlags);
 
   void setObjectX(glhckObject* object, float const value);
   void setObjectY(glhckObject* object, float const value);
@@ -77,7 +78,7 @@ int anglhck::registerToEngine(asIScriptEngine *engine)
   engine->RegisterObjectProperty("glhckTextureParameters", "int8 mipmap", asOFFSET(glhckTextureParameters, mipmap));
 
   engine->RegisterObjectType("glhckTexture", 0, asOBJ_REF);
-  engine->RegisterObjectBehaviour("glhckTexture", asBEHAVE_FACTORY, "glhckTexture@ createTexture(const string filename, const uint importFlags, const glhckTextureParameters format)", asFUNCTION(createTexture), asCALL_CDECL);
+  engine->RegisterObjectBehaviour("glhckTexture", asBEHAVE_FACTORY, "glhckTexture@ createTexture(const string, const uint, const glhckTextureParameters)", asFUNCTION(createTexture), asCALL_CDECL);
   engine->RegisterObjectBehaviour("glhckTexture", asBEHAVE_ADDREF, "void f()", asFUNCTION(glhckTextureRef), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectBehaviour("glhckTexture", asBEHAVE_RELEASE, "void f()", asFUNCTION(glhckTextureFree), asCALL_CDECL_OBJFIRST);
 
@@ -112,6 +113,7 @@ int anglhck::registerToEngine(asIScriptEngine *engine)
   engine->RegisterObjectMethod("glhckObject", "void setTexture(glhckTexture@ texture)", asFUNCTION(glhckObjectTexture), asCALL_CDECL_OBJFIRST);
   engine->RegisterGlobalFunction("glhckObject@ createCube(const float)", asFUNCTION(glhckCubeNew), asCALL_CDECL);
   engine->RegisterGlobalFunction("glhckObject@ createSprite(glhckTexture@ texture, const float width, const float height)", asFUNCTION(glhckSpriteNew), asCALL_CDECL);
+  engine->RegisterGlobalFunction("glhckObject@ createModel(const string, const float, uint8)", asFUNCTION(createModel), asCALL_CDECL);
 
   engine->RegisterObjectType("glhckCamera", 0, asOBJ_REF);
   engine->RegisterObjectBehaviour("glhckCamera", asBEHAVE_FACTORY, "glhckCamera@ f()", asFUNCTION(glhckCameraNew), asCALL_CDECL);
@@ -128,6 +130,11 @@ namespace
   glhckTexture* createTexture(std::string const& filename, unsigned int const importFlags, glhckTextureParameters const& parameters)
   {
     return glhckTextureNew(filename.data(), importFlags, &parameters);
+  }
+
+  glhckObject* createModel(std::string const& filename, float const size, const unsigned int importFlags)
+  {
+    return glhckModelNew(filename.data(), size, importFlags);
   }
 
   void setObjectX(glhckObject* object, float const value)

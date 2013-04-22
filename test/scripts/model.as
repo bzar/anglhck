@@ -1,6 +1,6 @@
 void main()
 {
-  glhckObject@ cube = createCube(1);
+  glhckObject@ ambulance = createModel("test/models/raf22031.ctm", 4, 0);
   glhckCamera camera;
   
   camera.object.setPosition(25, 25, 50);
@@ -12,9 +12,8 @@ void main()
   do
   {
     float t = current - start;
-    cube.yRotation = t * 360;
-    cube.xScale = 1 + 15 * t / 5;
-    cube.draw();
+    ambulance.yRotation = t * 180;
+    ambulance.draw();
     render();
     current = time();
   } while(current - start < 5);
