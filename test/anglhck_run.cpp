@@ -56,9 +56,9 @@ void run(std::string const& scriptFile)
   asIScriptEngine* engine = asCreateScriptEngine(ANGELSCRIPT_VERSION);
 
   std::cout << "-- Registering objects and functions" << std::endl;
+  RegisterStdString(engine);
   anglhck::registerToEngine(engine);
 
-  RegisterStdString(engine);
   engine->RegisterGlobalFunction("void print(const string &in)", asFUNCTION(print), asCALL_CDECL);
   engine->RegisterGlobalFunction("double time()", asFUNCTION(currentTime), asCALL_CDECL);
   engine->RegisterGlobalFunction("void render()", asFUNCTION(swap), asCALL_CDECL);
