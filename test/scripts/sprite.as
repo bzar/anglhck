@@ -1,8 +1,5 @@
 void main()
 {
-  glhckObject@ cube = createCube(1);
-  glhckCamera camera;
-  
   glhckTextureParameters textureParameters;
   textureParameters.minLod = -1000.0f;
   textureParameters.maxLod = 1000.0f;
@@ -20,9 +17,9 @@ void main()
   textureParameters.mipmap = 0;
   
   glhckTexture tex("test/textures/infantry_1.png", 0, textureParameters);
-  cube.setTexture(tex);
   glhckObject@ sprite = createSprite(tex, 8, 8);
-  sprite.setPosition(8, 8, 0);
+
+  glhckCamera camera;
   camera.object.setPosition(25, 25, 50);
   camera.object.target(0, 0, 0);
   camera.update();
@@ -32,10 +29,7 @@ void main()
   do
   {
     float t = current - start;
-    cube.yRotation = t * 360;
-    cube.xScale = 1 + 15 * t / 5;
-    sprite.x = 5 + t;
-    cube.draw();
+    sprite.x = -15 + t*10;
     sprite.draw();
     render();
     current = time();
