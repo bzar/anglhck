@@ -6,6 +6,8 @@ namespace
 {
   glhckTexture* createTexture(std::string const& filename, const unsigned int importFlags, const glhckTextureParameters &parameters);
   glhckObject* createModel(std::string const& filename, float const size, const unsigned int importFlags);
+  float drawText(glhckText *text, unsigned int const font_id, float const size, float const x, float const y, std::string const& s);
+  unsigned int setTextFont(glhckText *text, std::string const& filename);
 
   void setObjectX(glhckObject* object, float const value);
   void setObjectY(glhckObject* object, float const value);
@@ -122,6 +124,15 @@ int anglhck::registerToEngine(asIScriptEngine *engine)
   engine->RegisterObjectMethod("glhckCamera", "glhckObject@ get_object()", asFUNCTION(glhckCameraGetObject), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectMethod("glhckCamera", "void update()", asFUNCTION(glhckCameraUpdate), asCALL_CDECL_OBJFIRST);
 
+  engine->RegisterObjectType("glhckText", 0, asOBJ_REF);
+  engine->RegisterObjectBehaviour("glhckText", asBEHAVE_FACTORY, "glhckText@ f(const int, const int)", asFUNCTION(glhckTextNew), asCALL_CDECL);
+  engine->RegisterObjectBehaviour("glhckText", asBEHAVE_ADDREF, "void f()", asFUNCTION(glhckTextureRef), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectBehaviour("glhckText", asBEHAVE_RELEASE, "void f()", asFUNCTION(glhckTextFree), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("glhckText", "uint setFont(const string)", asFUNCTION(setTextFont), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("glhckText", "void setColor(const uint8, const uint8, const uint8, const uint8)", asFUNCTION(glhckTextColor), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("glhckText", "float render(const uint, const float, const float, const float, const string)", asFUNCTION(drawText), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("glhckText", "void draw()", asFUNCTION(glhckTextRender), asCALL_CDECL_OBJFIRST);
+
   return 0;
 }
 
@@ -136,6 +147,19 @@ namespace
   {
     return glhckModelNew(filename.data(), size, importFlags);
   }
+
+  float drawText(glhckText *text, unsigned int const font_id, float const size, float const x, float const y, std::string const& s)
+  {
+    float width = 0.0f;
+    glhckTextDraw(text, font_id, size, x, y, s.data(), &width);
+    return width;
+  }
+
+  unsigned int setTextFont(glhckText *text, std::string const& filename)
+  {
+    return glhckTextNewFont(text, filename.data());
+  }
+
 
   void setObjectX(glhckObject* object, float const value)
   {
