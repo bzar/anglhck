@@ -8,11 +8,13 @@ void main()
   camera.object.setPosition(25, 25, 50);
   camera.object.target(0, 0, 0);
   camera.update();
+  
+
 
   double start = time();
   do
   {
-    float textWidth = text.render(font, 64, -400 + time() * 800/3, 240, "Hello World!");
+  float textWidth = text.stash(font, 64, -400 + time() * 800/3, 240, "Hello World!");
     text.draw();
     render();
   } while(time() - start < 5);

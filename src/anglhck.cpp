@@ -7,7 +7,7 @@ namespace
   glhckTexture* createTexture(std::string const& filename, const unsigned int importFlags, const glhckTextureParameters &parameters);
   glhckObject* createModel(std::string const& filename, float const size, const unsigned int importFlags);
   glhckObject* createTextObject(glhckText *text, unsigned int const font, float const size, std::string const& str, const glhckTextureParameters &parameters);
-  float drawText(glhckText *text, unsigned int const font_id, float const size, float const x, float const y, std::string const& s);
+  float stashText(glhckText *text, unsigned int const font_id, float const size, float const x, float const y, std::string const& s);
   unsigned int setTextFont(glhckText *text, std::string const& filename);
 
   void setObjectX(glhckObject* object, float const value);
@@ -131,7 +131,7 @@ int anglhck::registerToEngine(asIScriptEngine *engine)
   engine->RegisterObjectBehaviour("glhckText", asBEHAVE_RELEASE, "void f()", asFUNCTION(glhckTextFree), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectMethod("glhckText", "uint setFont(const string)", asFUNCTION(setTextFont), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectMethod("glhckText", "void setColor(const uint8, const uint8, const uint8, const uint8)", asFUNCTION(glhckTextColor), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("glhckText", "float render(const uint, const float, const float, const float, const string)", asFUNCTION(drawText), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("glhckText", "float stash(const uint, const float, const float, const float, const string)", asFUNCTION(stashText), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectMethod("glhckText", "void draw()", asFUNCTION(glhckTextRender), asCALL_CDECL_OBJFIRST);
 
   engine->RegisterGlobalFunction("glhckObject@ createTextObject(glhckText@, const uint8, const float, const string, const glhckTextureParameters)", asFUNCTION(createTextObject), asCALL_CDECL);
@@ -156,10 +156,10 @@ namespace
     return glhckTextPlane(text, font, size, str.data(), &parameters);
   }
 
-  float drawText(glhckText *text, unsigned int const font_id, float const size, float const x, float const y, std::string const& s)
+  float stashText(glhckText *text, unsigned int const font_id, float const size, float const x, float const y, std::string const& s)
   {
     float width = 0.0f;
-    glhckTextDraw(text, font_id, size, x, y, s.data(), &width);
+    glhckTextStash(text, font_id, size, x, y, s.data(), &width);
     return width;
   }
 
