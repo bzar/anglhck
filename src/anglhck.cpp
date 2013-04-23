@@ -6,6 +6,7 @@ namespace
 {
   glhckTexture* createTexture(std::string const& filename, const unsigned int importFlags, const glhckTextureParameters &parameters);
   glhckObject* createModel(std::string const& filename, float const size, const unsigned int importFlags);
+  glhckObject* createTextObject(glhckText *text, unsigned int const font, float const size, std::string const& str, const glhckTextureParameters &parameters);
   float drawText(glhckText *text, unsigned int const font_id, float const size, float const x, float const y, std::string const& s);
   unsigned int setTextFont(glhckText *text, std::string const& filename);
 
@@ -133,6 +134,8 @@ int anglhck::registerToEngine(asIScriptEngine *engine)
   engine->RegisterObjectMethod("glhckText", "float render(const uint, const float, const float, const float, const string)", asFUNCTION(drawText), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectMethod("glhckText", "void draw()", asFUNCTION(glhckTextRender), asCALL_CDECL_OBJFIRST);
 
+  engine->RegisterGlobalFunction("glhckObject@ createTextObject(glhckText@, const uint8, const float, const string, const glhckTextureParameters)", asFUNCTION(createTextObject), asCALL_CDECL);
+
   return 0;
 }
 
@@ -146,6 +149,11 @@ namespace
   glhckObject* createModel(std::string const& filename, float const size, const unsigned int importFlags)
   {
     return glhckModelNew(filename.data(), size, importFlags);
+  }
+
+  glhckObject* createTextObject(glhckText *text, unsigned int const font, float const size, std::string const& str, const glhckTextureParameters &parameters)
+  {
+    return glhckTextPlane(text, font, size, str.data(), &parameters);
   }
 
   float drawText(glhckText *text, unsigned int const font_id, float const size, float const x, float const y, std::string const& s)
