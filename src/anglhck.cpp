@@ -122,17 +122,18 @@ int anglhck::registerToEngine(asIScriptEngine *engine)
   engine->RegisterObjectBehaviour("glhckCamera", asBEHAVE_FACTORY, "glhckCamera@ f()", asFUNCTION(glhckCameraNew), asCALL_CDECL);
   engine->RegisterObjectBehaviour("glhckCamera", asBEHAVE_ADDREF, "void f()", asFUNCTION(glhckCameraRef), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectBehaviour("glhckCamera", asBEHAVE_RELEASE, "void f()", asFUNCTION(glhckCameraFree), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("glhckCamera", "glhckObject@ get_object()", asFUNCTION(glhckCameraGetObject), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("glhckCamera", "glhckObject@+ get_object()", asFUNCTION(glhckCameraGetObject), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectMethod("glhckCamera", "void update()", asFUNCTION(glhckCameraUpdate), asCALL_CDECL_OBJFIRST);
 
   engine->RegisterObjectType("glhckText", 0, asOBJ_REF);
   engine->RegisterObjectBehaviour("glhckText", asBEHAVE_FACTORY, "glhckText@ f(const int, const int)", asFUNCTION(glhckTextNew), asCALL_CDECL);
-  engine->RegisterObjectBehaviour("glhckText", asBEHAVE_ADDREF, "void f()", asFUNCTION(glhckTextureRef), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectBehaviour("glhckText", asBEHAVE_ADDREF, "void f()", asFUNCTION(glhckTextRef), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectBehaviour("glhckText", asBEHAVE_RELEASE, "void f()", asFUNCTION(glhckTextFree), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectMethod("glhckText", "uint setFont(const string)", asFUNCTION(setTextFont), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectMethod("glhckText", "void setColor(const uint8, const uint8, const uint8, const uint8)", asFUNCTION(glhckTextColor), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectMethod("glhckText", "float stash(const uint, const float, const float, const float, const string)", asFUNCTION(stashText), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectMethod("glhckText", "void draw()", asFUNCTION(glhckTextRender), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("glhckText", "void clear()", asFUNCTION(glhckTextClear), asCALL_CDECL_OBJFIRST);
 
   engine->RegisterGlobalFunction("glhckObject@ createTextObject(glhckText@, const uint8, const float, const string, const glhckTextureParameters)", asFUNCTION(createTextObject), asCALL_CDECL);
 
