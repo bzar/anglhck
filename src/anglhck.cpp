@@ -113,7 +113,13 @@ int anglhck::registerToEngine(asIScriptEngine *engine)
   engine->RegisterObjectMethod("glhckObject", "void set_xScale(const float)", asFUNCTION(setObjectXScale), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectMethod("glhckObject", "void set_yScale(const float)", asFUNCTION(setObjectYScale), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectMethod("glhckObject", "void set_zScale(const float)", asFUNCTION(setObjectZScale), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("glhckObject", "void setTexture(glhckTexture@ texture)", asFUNCTION(glhckObjectTexture), asCALL_CDECL_OBJFIRST);
+
+  engine->RegisterObjectMethod("glhckObject", "void set_texture(glhckTexture@)", asFUNCTION(glhckObjectTexture), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("glhckObject", "glhckTexture@+ get_texture()", asFUNCTION(glhckObjectGetTexture), asCALL_CDECL_OBJFIRST);
+
+  engine->RegisterObjectMethod("glhckObject", "void set_parent(glhckObject@)", asFUNCTION(glhckObjectAddChild), asCALL_CDECL_OBJLAST);
+  engine->RegisterObjectMethod("glhckObject", "glhckObject@+ get_parent()", asFUNCTION(glhckObjectParent), asCALL_CDECL_OBJFIRST);
+
   engine->RegisterGlobalFunction("glhckObject@ createCube(const float)", asFUNCTION(glhckCubeNew), asCALL_CDECL);
   engine->RegisterGlobalFunction("glhckObject@ createSprite(glhckTexture@ texture, const float width, const float height)", asFUNCTION(glhckSpriteNew), asCALL_CDECL);
   engine->RegisterGlobalFunction("glhckObject@ createModel(const string, const float, uint8)", asFUNCTION(createModel), asCALL_CDECL);

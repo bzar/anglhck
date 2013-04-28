@@ -17,6 +17,7 @@ void run(std::string const& scriptFile);
 void print(std::string &msg);
 void swap();
 double currentTime();
+void messageCallback(const asSMessageInfo *msg, void *param);
 
 int main(int argc, char** argv)
 {
@@ -54,6 +55,7 @@ void run(std::string const& scriptFile)
 {
   std::cout << "-- Creating engine" << std::endl;
   asIScriptEngine* engine = asCreateScriptEngine(ANGELSCRIPT_VERSION);
+  engine->SetMessageCallback(asFUNCTION(messageCallback), 0, asCALL_CDECL);
 
   std::cout << "-- Registering objects and functions" << std::endl;
   RegisterStdString(engine);
@@ -114,4 +116,14 @@ void swap()
 double currentTime()
 {
   return glfwGetTime();
+}
+
+void messageCallback(const asSMessageInfo *msg, void *param)
+{
+  const char *type = "ERR ";
+  if( msg->type == asMSGTYPE_WARNING )
+    type = "WARN";
+  else if( msg->type == asMSGTYPE_INFORMATION )
+    type = "INFO";
+  std::cout << msg->section << "(" << msg->row << ", " << msg->col << ") : " << type << " : " << msg->message << std::endl;
 }
