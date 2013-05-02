@@ -157,7 +157,6 @@ namespace
 {
   glhckTexture* createTexture(std::string const& filename, const glhckImportImageParameters &importParameters, const glhckTextureParameters &parameters)
   {
-    std::cout << parameters.minLod << " " << parameters.maxLod << std::endl;
     return glhckTextureNew(filename.data(), &importParameters, &parameters);
   }
 

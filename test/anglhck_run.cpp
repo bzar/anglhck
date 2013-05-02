@@ -48,6 +48,9 @@ int main(int argc, char** argv)
 
   run(scriptFile);
 
+  glhckContextTerminate();
+  glfwTerminate();
+
   return 0;
 }
 
