@@ -13,10 +13,12 @@ void main()
   textureParameters.magFilter = GLHCK_FILTER_NEAREST;
   textureParameters.compareMode = GLHCK_COMPARE_NONE;
   textureParameters.compareFunc = GLHCK_COMPARE_LEQUAL;
-  textureParameters.compression = GLHCK_COMPRESSION_NONE;
   textureParameters.mipmap = 0;
-  
-  glhckTexture tex("test/textures/infantry_1.png", 0, textureParameters);
+
+  glhckImportImageParameters imageParameters;
+  imageParameters.compression = GLHCK_COMPRESSION_NONE;
+
+  glhckTexture tex("test/textures/infantry_1.png", imageParameters, textureParameters);
 
   glhckObject@ cube = createCube(1);
   @cube.texture = tex;

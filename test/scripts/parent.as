@@ -13,10 +13,12 @@ void main()
   textureParameters.magFilter = GLHCK_FILTER_NEAREST;
   textureParameters.compareMode = GLHCK_COMPARE_NONE;
   textureParameters.compareFunc = GLHCK_COMPARE_LEQUAL;
-  textureParameters.compression = GLHCK_COMPRESSION_NONE;
   textureParameters.mipmap = 0;
+
+  glhckImportImageParameters imageParameters;
+  imageParameters.compression = GLHCK_COMPRESSION_NONE;
   
-  glhckTexture tex("test/textures/infantry_1.png", 0, textureParameters);
+  glhckTexture tex("test/textures/infantry_1.png", imageParameters, textureParameters);
   glhckObject@ sprite = createSprite(tex, 8, 8);
   glhckObject@ child = createSprite(tex, 6, 6);
   glhckObject@ child2 = createSprite(tex, 4, 4);

@@ -13,7 +13,6 @@ void main()
   textureParameters.magFilter = GLHCK_FILTER_NEAREST;
   textureParameters.compareMode = GLHCK_COMPARE_NONE;
   textureParameters.compareFunc = GLHCK_COMPARE_LEQUAL;
-  textureParameters.compression = GLHCK_COMPRESSION_NONE;
   textureParameters.mipmap = 0;
   
   glhckText text(512, 128);

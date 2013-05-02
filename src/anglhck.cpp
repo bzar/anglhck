@@ -4,8 +4,8 @@
 
 namespace
 {
-  glhckTexture* createTexture(std::string const& filename, const unsigned int importFlags, const glhckTextureParameters &parameters);
-  glhckObject* createModel(std::string const& filename, float const size, const unsigned int importFlags);
+  glhckTexture* createTexture(std::string const& filename, const glhckImportImageParameters &importParameters, const glhckTextureParameters &parameters);
+  glhckObject* createModel(std::string const& filename, float const size, const glhckImportModelParameters);
   glhckObject* createTextObject(glhckText *text, unsigned int const font, float const size, std::string const& str, const glhckTextureParameters &parameters);
   float stashText(glhckText *text, unsigned int const font_id, float const size, float const x, float const y, std::string const& s);
   unsigned int setTextFont(glhckText *text, std::string const& filename);
@@ -32,6 +32,17 @@ namespace
 
 int anglhck::registerToEngine(asIScriptEngine *engine)
 {
+  engine->RegisterObjectType("glhckImportModelParameters", sizeof(glhckImportModelParameters), asOBJ_VALUE | asOBJ_POD);
+  engine->RegisterObjectProperty("glhckImportModelParameters", "bool animated", asOFFSET(glhckImportModelParameters, animated));
+  engine->RegisterObjectProperty("glhckImportModelParameters", "bool flatten", asOFFSET(glhckImportModelParameters, flatten));
+
+  engine->RegisterEnum("glhckTextureCompression");
+  engine->RegisterEnumValue("glhckTextureCompression", "GLHCK_COMPRESSION_NONE", GLHCK_COMPRESSION_NONE);
+  engine->RegisterEnumValue("glhckTextureCompression", "GLHCK_COMPRESSION_DXT", GLHCK_COMPRESSION_DXT);
+
+  engine->RegisterObjectType("glhckImportImageParameters", sizeof(glhckImportImageParameters), asOBJ_VALUE | asOBJ_POD);
+  engine->RegisterObjectProperty("glhckImportImageParameters", "glhckTextureCompression compression", asOFFSET(glhckImportImageParameters, compression));
+
   engine->RegisterEnum("glhckTextureWrap");
   engine->RegisterEnumValue("glhckTextureWrap", "GLHCK_WRAP_REPEAT", GLHCK_WRAP_REPEAT);
   engine->RegisterEnumValue("glhckTextureWrap", "GLHCK_WRAP_MIRRORED_REPEAT", GLHCK_WRAP_MIRRORED_REPEAT);
@@ -60,10 +71,6 @@ int anglhck::registerToEngine(asIScriptEngine *engine)
   engine->RegisterEnumValue("glhckTextureCompareFunc", "GLHCK_COMPARE_ALWAYS", GLHCK_COMPARE_ALWAYS);
   engine->RegisterEnumValue("glhckTextureCompareFunc", "GLHCK_COMPARE_NEVER", GLHCK_COMPARE_NEVER);
 
-  engine->RegisterEnum("glhckTextureCompression");
-  engine->RegisterEnumValue("glhckTextureCompression", "GLHCK_COMPRESSION_NONE", GLHCK_COMPRESSION_NONE);
-  engine->RegisterEnumValue("glhckTextureCompression", "GLHCK_COMPRESSION_DXT", GLHCK_COMPRESSION_DXT);
-
   engine->RegisterObjectType("glhckTextureParameters", sizeof(glhckTextureParameters), asOBJ_VALUE | asOBJ_POD);
   engine->RegisterObjectProperty("glhckTextureParameters", "float minLod", asOFFSET(glhckTextureParameters, minLod));
   engine->RegisterObjectProperty("glhckTextureParameters", "float maxLod", asOFFSET(glhckTextureParameters, maxLod));
@@ -77,11 +84,10 @@ int anglhck::registerToEngine(asIScriptEngine *engine)
   engine->RegisterObjectProperty("glhckTextureParameters", "glhckTextureFilter magFilter", asOFFSET(glhckTextureParameters, magFilter));
   engine->RegisterObjectProperty("glhckTextureParameters", "glhckTextureCompareMode compareMode", asOFFSET(glhckTextureParameters, compareMode));
   engine->RegisterObjectProperty("glhckTextureParameters", "glhckTextureCompareFunc compareFunc", asOFFSET(glhckTextureParameters, compareFunc));
-  engine->RegisterObjectProperty("glhckTextureParameters", "glhckTextureCompression compression", asOFFSET(glhckTextureParameters, compression));
   engine->RegisterObjectProperty("glhckTextureParameters", "int8 mipmap", asOFFSET(glhckTextureParameters, mipmap));
 
   engine->RegisterObjectType("glhckTexture", 0, asOBJ_REF);
-  engine->RegisterObjectBehaviour("glhckTexture", asBEHAVE_FACTORY, "glhckTexture@ createTexture(const string, const uint, const glhckTextureParameters)", asFUNCTION(createTexture), asCALL_CDECL);
+  engine->RegisterObjectBehaviour("glhckTexture", asBEHAVE_FACTORY, "glhckTexture@ createTexture(const string, const glhckImportImageParameters, const glhckTextureParameters)", asFUNCTION(createTexture), asCALL_CDECL);
   engine->RegisterObjectBehaviour("glhckTexture", asBEHAVE_ADDREF, "void f()", asFUNCTION(glhckTextureRef), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectBehaviour("glhckTexture", asBEHAVE_RELEASE, "void f()", asFUNCTION(glhckTextureFree), asCALL_CDECL_OBJFIRST);
 
@@ -122,7 +128,7 @@ int anglhck::registerToEngine(asIScriptEngine *engine)
 
   engine->RegisterGlobalFunction("glhckObject@ createCube(const float)", asFUNCTION(glhckCubeNew), asCALL_CDECL);
   engine->RegisterGlobalFunction("glhckObject@ createSprite(glhckTexture@ texture, const float width, const float height)", asFUNCTION(glhckSpriteNew), asCALL_CDECL);
-  engine->RegisterGlobalFunction("glhckObject@ createModel(const string, const float, uint8)", asFUNCTION(createModel), asCALL_CDECL);
+  engine->RegisterGlobalFunction("glhckObject@ createModel(const string, const float, const glhckImportModelParameters)", asFUNCTION(createModel), asCALL_CDECL);
 
   engine->RegisterObjectType("glhckCamera", 0, asOBJ_REF);
   engine->RegisterObjectBehaviour("glhckCamera", asBEHAVE_FACTORY, "glhckCamera@ f()", asFUNCTION(glhckCameraNew), asCALL_CDECL);
@@ -148,14 +154,14 @@ int anglhck::registerToEngine(asIScriptEngine *engine)
 
 namespace
 {
-  glhckTexture* createTexture(std::string const& filename, unsigned int const importFlags, glhckTextureParameters const& parameters)
+  glhckTexture* createTexture(std::string const& filename, const glhckImportImageParameters &importParameters, glhckTextureParameters const& parameters)
   {
-    return glhckTextureNew(filename.data(), importFlags, &parameters);
+    return glhckTextureNew(filename.data(), &importParameters, &parameters);
   }
 
-  glhckObject* createModel(std::string const& filename, float const size, const unsigned int importFlags)
+  glhckObject* createModel(std::string const& filename, float const size, const glhckImportModelParameters params)
   {
-    return glhckModelNew(filename.data(), size, importFlags);
+    return glhckModelNew(filename.data(), size, &params);
   }
 
   glhckObject* createTextObject(glhckText *text, unsigned int const font, float const size, std::string const& str, const glhckTextureParameters &parameters)
