@@ -1,6 +1,10 @@
 void main()
 {
-  glhckObject@ ambulance = createModel("test/models/raf22031.ctm", 4, 0);
+  glhckImportModelParameters modelParameters;
+  modelParameters.animated = false;
+  modelParameters.flatten = false;
+  
+  glhckObject@ ambulance = createModel("test/models/raf22031.ctm", 4, modelParameters);
   glhckCamera camera;
   
   camera.object.setPosition(25, 25, 50);
