@@ -88,9 +88,14 @@ int anglhck::registerToEngine(asIScriptEngine *engine)
   engine->RegisterObjectProperty("glhckTextureParameters", "int8 mipmap", asOFFSET(glhckTextureParameters, mipmap));
 
   engine->RegisterObjectType("glhckTexture", 0, asOBJ_REF);
-  engine->RegisterObjectBehaviour("glhckTexture", asBEHAVE_FACTORY, "glhckTexture@ createTexture(const string &in, const glhckImportImageParameters &in, const glhckTextureParameters &in)", asFUNCTION(createTexture), asCALL_CDECL);
+  engine->RegisterObjectBehaviour("glhckTexture", asBEHAVE_FACTORY, "glhckTexture@ f(const string &in, const glhckImportImageParameters &in, const glhckTextureParameters &in)", asFUNCTION(createTexture), asCALL_CDECL);
   engine->RegisterObjectBehaviour("glhckTexture", asBEHAVE_ADDREF, "void f()", asFUNCTION(glhckTextureRef), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectBehaviour("glhckTexture", asBEHAVE_RELEASE, "void f()", asFUNCTION(glhckTextureFree), asCALL_CDECL_OBJFIRST);
+
+  engine->RegisterObjectType("glhckMaterial", 0, asOBJ_REF);
+  engine->RegisterObjectBehaviour("glhckMaterial", asBEHAVE_FACTORY, "glhckMaterial@ f(glhckTexture@)", asFUNCTION(glhckMaterialNew), asCALL_CDECL);
+  engine->RegisterObjectBehaviour("glhckMaterial", asBEHAVE_ADDREF, "void f()", asFUNCTION(glhckMaterialRef), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectBehaviour("glhckMaterial", asBEHAVE_RELEASE, "void f()", asFUNCTION(glhckMaterialFree), asCALL_CDECL_OBJFIRST);
 
   engine->RegisterObjectType("glhckObject", 0, asOBJ_REF);
   engine->RegisterObjectBehaviour("glhckObject", asBEHAVE_ADDREF, "void f()", asFUNCTION(glhckObjectRef), asCALL_CDECL_OBJFIRST);
@@ -121,8 +126,8 @@ int anglhck::registerToEngine(asIScriptEngine *engine)
   engine->RegisterObjectMethod("glhckObject", "void set_yScale(const float)", asFUNCTION(setObjectYScale), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectMethod("glhckObject", "void set_zScale(const float)", asFUNCTION(setObjectZScale), asCALL_CDECL_OBJFIRST);
 
-  engine->RegisterObjectMethod("glhckObject", "void set_texture(glhckTexture@)", asFUNCTION(glhckObjectTexture), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("glhckObject", "glhckTexture@+ get_texture()", asFUNCTION(glhckObjectGetTexture), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("glhckObject", "void set_material(glhckMaterial@)", asFUNCTION(glhckObjectMaterial), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("glhckObject", "glhckMaterial@+ get_material()", asFUNCTION(glhckObjectGetMaterial), asCALL_CDECL_OBJFIRST);
 
   engine->RegisterObjectMethod("glhckObject", "void set_parent(glhckObject@)", asFUNCTION(glhckObjectAddChild), asCALL_CDECL_OBJLAST);
   engine->RegisterObjectMethod("glhckObject", "glhckObject@+ get_parent()", asFUNCTION(glhckObjectParent), asCALL_CDECL_OBJFIRST);

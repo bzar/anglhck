@@ -21,7 +21,7 @@ void main()
   glhckTexture tex("test/textures/infantry_1.png", imageParameters, textureParameters);
 
   glhckObject@ cube = createCube(1);
-  @cube.texture = tex;
+  @cube.material = glhckMaterial(tex);
   
   glhckCamera camera;
   camera.object.setPosition(25, 25, 50);
