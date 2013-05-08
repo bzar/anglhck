@@ -3,8 +3,8 @@ void main()
   glhck::Object@ cube = glhck::createCube(1);
   glhck::Camera camera;
   
-  camera.object.setPosition(25, 25, 50);
-  camera.object.target(0, 0, 0);
+  camera.object.position = glhck::Vec3(25, 25, 50);
+  camera.object.target = glhck::Vec3(0, 0, 0);
   camera.update();
   
   double start = time();
@@ -12,8 +12,8 @@ void main()
   do
   {
     float t = current - start;
-    cube.yRotation = t * 360;
-    cube.xScale = 1 + 15 * t / 5;
+    cube.rotation = glhck::Vec3(0, t * 180, 0);
+    cube.scale = glhck::Vec3(1 + 15 * t / 5, 1, 1);
     cube.draw();
     render();
     current = time();

@@ -22,8 +22,8 @@ void main()
   glhck::Object@ sprite = glhck::createSprite(tex, 8, 8);
 
   glhck::Camera camera;
-  camera.object.setPosition(25, 25, 50);
-  camera.object.target(0, 0, 0);
+  camera.object.position = glhck::Vec3(25, 25, 50);
+  camera.object.target = glhck::Vec3(0, 0, 0);
   camera.update();
   
   double start = time();
@@ -31,7 +31,7 @@ void main()
   do
   {
     float t = current - start;
-    sprite.x = -15 + t*10;
+    sprite.position = glhck::Vec3(-15 + t*10, 0, 0);
     sprite.draw();
     render();
     current = time();

@@ -26,12 +26,12 @@ void main()
   @child.parent = sprite;
   @child2.parent = child;
 
-  child.x = 10;
-  child2.x = 10;
+  child.position = glhck::Vec3(10, 0, 0);
+  child2.position = glhck::Vec3(10, 0, 0);
   
   glhck::Camera camera;
-  camera.object.setPosition(25, 25, 50);
-  camera.object.target(0, 0, 0);
+  camera.object.position = glhck::Vec3(25, 25, 50);
+  camera.object.target = glhck::Vec3(0, 0, 0);
   camera.update();
   
   double start = time();
@@ -39,8 +39,8 @@ void main()
   do
   {
     float t = current - start;
-    sprite.zRotation = t*360/3;
-    child.zRotation = t*360/2;
+    sprite.rotation = glhck::Vec3(0, 0, t*360/3);
+    child.rotation = glhck::Vec3(0, 0, t*360/2);
     
     sprite.draw();
     child.draw();

@@ -2,7 +2,6 @@
 
 #include <string>
 #include <iostream>
-#include <new>
 
 namespace
 {
@@ -12,32 +11,26 @@ namespace
   float stashText(glhckText *text, unsigned int const font_id, float const size, float const x, float const y, std::string const& s);
   unsigned int setTextFont(glhckText *text, std::string const& filename);
 
-  void setObjectX(glhckObject* object, float const value);
-  void setObjectY(glhckObject* object, float const value);
-  void setObjectZ(glhckObject* object, float const value);
-  float getObjectX(glhckObject* object);
-  float getObjectY(glhckObject* object);
-  float getObjectZ(glhckObject* object);
-  void setObjectXRotation(glhckObject* object, float const value);
-  void setObjectYRotation(glhckObject* object, float const value);
-  void setObjectZRotation(glhckObject* object, float const value);
-  float getObjectXRotation(glhckObject* object);
-  float getObjectYRotation(glhckObject* object);
-  float getObjectZRotation(glhckObject* object);
-  void setObjectXScale(glhckObject* object, float const value);
-  void setObjectYScale(glhckObject* object, float const value);
-  void setObjectZScale(glhckObject* object, float const value);
-  float getObjectXScale(glhckObject* object);
-  float getObjectYScale(glhckObject* object);
-  float getObjectZScale(glhckObject* object);
-
   void createColor(void* memory, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
+  void createVec3(void* memory, float x, float y, float z);
+  void createVec2(void* memory, float x, float y);
 }
 
 int anglhck::registerToEngine(asIScriptEngine *engine)
 {
   std::string const previousNameSpace = engine->GetDefaultNamespace();
   engine->SetDefaultNamespace("glhck");
+
+  engine->RegisterObjectType("Vec3", sizeof(kmVec3), asOBJ_VALUE | asOBJ_POD);
+  engine->RegisterObjectBehaviour("Vec3", asBEHAVE_CONSTRUCT, "void f(float x, float y, float z)", asFUNCTION(createVec3), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectProperty("Vec3", "float x", asOFFSET(kmVec3, x));
+  engine->RegisterObjectProperty("Vec3", "float y", asOFFSET(kmVec3, y));
+  engine->RegisterObjectProperty("Vec3", "float z", asOFFSET(kmVec3, z));
+
+  engine->RegisterObjectType("Vec2", sizeof(kmVec2), asOBJ_VALUE | asOBJ_POD);
+  engine->RegisterObjectBehaviour("Vec2", asBEHAVE_CONSTRUCT, "void f(float x, float y)", asFUNCTION(createVec2), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectProperty("Vec2", "float x", asOFFSET(kmVec2, x));
+  engine->RegisterObjectProperty("Vec2", "float y", asOFFSET(kmVec2, y));
 
   engine->RegisterObjectType("ImportModelParameters", sizeof(glhckImportModelParameters), asOBJ_VALUE | asOBJ_POD);
   engine->RegisterObjectProperty("ImportModelParameters", "bool animated", asOFFSET(glhckImportModelParameters, animated));
@@ -125,34 +118,17 @@ int anglhck::registerToEngine(asIScriptEngine *engine)
   engine->RegisterObjectBehaviour("Object", asBEHAVE_ADDREF, "void f()", asFUNCTION(glhckObjectRef), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectBehaviour("Object", asBEHAVE_RELEASE, "void f()", asFUNCTION(glhckObjectFree), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectMethod("Object", "void draw()", asFUNCTION(glhckObjectDraw), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("Object", "void setPosition(float x, float y, float z)", asFUNCTION(glhckObjectPositionf), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("Object", "void setRotation(float x, float y, float z)", asFUNCTION(glhckObjectRotationf), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("Object", "void move(float x, float y, float z)", asFUNCTION(glhckObjectMovef), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("Object", "void rotate(float x, float y, float z)", asFUNCTION(glhckObjectRotatef), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("Object", "void target(float x, float y, float z)", asFUNCTION(glhckObjectTargetf), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("Object", "void scale(float x, float y, float z)", asFUNCTION(glhckObjectScalef), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("Object", "float get_x()", asFUNCTION(getObjectX), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("Object", "float get_y()", asFUNCTION(getObjectY), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("Object", "float get_z()", asFUNCTION(getObjectZ), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("Object", "void set_x(const float)", asFUNCTION(setObjectX), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("Object", "void set_y(const float)", asFUNCTION(setObjectY), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("Object", "void set_z(const float)", asFUNCTION(setObjectZ), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("Object", "float get_xRotation()", asFUNCTION(getObjectXRotation), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("Object", "float get_yRotation()", asFUNCTION(getObjectYRotation), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("Object", "float get_zRotation()", asFUNCTION(getObjectZRotation), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("Object", "void set_xRotation(const float)", asFUNCTION(setObjectXRotation), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("Object", "void set_yRotation(const float)", asFUNCTION(setObjectYRotation), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("Object", "void set_zRotation(const float)", asFUNCTION(setObjectZRotation), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("Object", "float get_xScale()", asFUNCTION(getObjectXScale), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("Object", "float get_yScale()", asFUNCTION(getObjectYScale), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("Object", "float get_zScale()", asFUNCTION(getObjectZScale), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("Object", "void set_xScale(const float)", asFUNCTION(setObjectXScale), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("Object", "void set_yScale(const float)", asFUNCTION(setObjectYScale), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("Object", "void set_zScale(const float)", asFUNCTION(setObjectZScale), asCALL_CDECL_OBJFIRST);
 
+  engine->RegisterObjectMethod("Object", "void set_position(const Vec3 &in)", asFUNCTION(glhckObjectPosition), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Object", "Vec3& get_position()", asFUNCTION(glhckObjectGetPosition), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Object", "void set_rotation(const Vec3 &in)", asFUNCTION(glhckObjectRotation), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Object", "Vec3& get_rotation()", asFUNCTION(glhckObjectGetRotation), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Object", "void set_scale(const Vec3 &in)", asFUNCTION(glhckObjectScale), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Object", "Vec3& get_scale()", asFUNCTION(glhckObjectGetScale), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Object", "void set_target(const Vec3 &in)", asFUNCTION(glhckObjectTarget), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Object", "Vec3& get_target()", asFUNCTION(glhckObjectGetTarget), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectMethod("Object", "void set_material(Material@)", asFUNCTION(glhckObjectMaterial), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectMethod("Object", "Material@+ get_material()", asFUNCTION(glhckObjectGetMaterial), asCALL_CDECL_OBJFIRST);
-
   engine->RegisterObjectMethod("Object", "void set_parent(Object@)", asFUNCTION(glhckObjectAddChild), asCALL_CDECL_OBJLAST);
   engine->RegisterObjectMethod("Object", "Object@+ get_parent()", asFUNCTION(glhckObjectParent), asCALL_CDECL_OBJFIRST);
 
@@ -213,109 +189,22 @@ namespace
     return glhckTextNewFont(text, filename.data());
   }
 
-
-  void setObjectX(glhckObject* object, float const value)
-  {
-    kmVec3 const* position = glhckObjectGetPosition(object);
-    glhckObjectPositionf(object, value, position->y, position->z);
-  }
-
-  void setObjectY(glhckObject* object, float const value)
-  {
-    kmVec3 const* position = glhckObjectGetPosition(object);
-    glhckObjectPositionf(object, position->x, value, position->z);
-  }
-
-  void setObjectZ(glhckObject* object, float const value)
-  {
-    kmVec3 const* position = glhckObjectGetPosition(object);
-    glhckObjectPositionf(object, position->x, position->y, value);
-  }
-
-  float getObjectX(glhckObject* object)
-  {
-    return glhckObjectGetPosition(object)->x;
-  }
-
-  float getObjectY(glhckObject* object)
-  {
-    return glhckObjectGetPosition(object)->y;
-  }
-
-  float getObjectZ(glhckObject* object)
-  {
-    return glhckObjectGetPosition(object)->z;
-  }
-
-  void setObjectXRotation(glhckObject* object, float const value)
-  {
-    kmVec3 const* rotation = glhckObjectGetRotation(object);
-    glhckObjectRotationf(object, value, rotation->y, rotation->z);
-  }
-
-  void setObjectYRotation(glhckObject* object, float const value)
-  {
-    kmVec3 const* rotation = glhckObjectGetRotation(object);
-    glhckObjectRotationf(object, rotation->x, value, rotation->z);
-  }
-
-  void setObjectZRotation(glhckObject* object, float const value)
-  {
-    kmVec3 const* rotation = glhckObjectGetRotation(object);
-    glhckObjectRotationf(object, rotation->x, rotation->y, value);
-  }
-
-  float getObjectXRotation(glhckObject* object)
-  {
-    return glhckObjectGetRotation(object)->x;
-  }
-
-  float getObjectYRotation(glhckObject* object)
-  {
-    return glhckObjectGetRotation(object)->y;
-  }
-
-  float getObjectZRotation(glhckObject* object)
-  {
-    return glhckObjectGetRotation(object)->z;
-  }
-
-  void setObjectXScale(glhckObject* object, float const value)
-  {
-    kmVec3 const* scale = glhckObjectGetScale(object);
-    glhckObjectScalef(object, value, scale->y, scale->z);
-  }
-
-  void setObjectYScale(glhckObject* object, float const value)
-  {
-    kmVec3 const* scale = glhckObjectGetScale(object);
-    glhckObjectScalef(object, scale->x, value, scale->z);
-  }
-
-  void setObjectZScale(glhckObject* object, float const value)
-  {
-    kmVec3 const* scale = glhckObjectGetScale(object);
-    glhckObjectScalef(object, scale->x, scale->y, value);
-  }
-
-  float getObjectXScale(glhckObject* object)
-  {
-    return glhckObjectGetScale(object)->x;
-  }
-
-  float getObjectYScale(glhckObject* object)
-  {
-    return glhckObjectGetScale(object)->y;
-  }
-
-  float getObjectZScale(glhckObject* object)
-  {
-    return glhckObjectGetScale(object)->z;
-  }
-
   void createColor(void* memory, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
   {
     glhckColorb* color = static_cast<glhckColorb*>(memory);
     *color = {r, g, b, a};
   }
+
+  void createVec3(void* memory, float x, float y, float z)
+  {
+    kmVec3* v = static_cast<kmVec3*>(memory);
+    *v = {x, y, z};
+  }
+
+  void createVec2(void* memory, float x, float y)
+  {
+    kmVec2* v = static_cast<kmVec2*>(memory);
+    *v = {x, y};
+  }
+
 }

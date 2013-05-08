@@ -22,8 +22,8 @@ void main()
   glhck::Object@ textObject = glhck::createTextObject(text, font, 64, "Hello World!", textureParameters);
 
   glhck::Camera camera;
-  camera.object.setPosition(25, 25, 50);
-  camera.object.target(0, 0, 0);
+  camera.object.position = glhck::Vec3(25, 25, 50);
+  camera.object.target = glhck::Vec3(0, 0, 0);
   camera.update();
   
   double start = time();
@@ -31,7 +31,7 @@ void main()
   do
   {
     float t = current - start;
-    textObject.x = 196 - t*100;
+    textObject.position = glhck::Vec3(196 - t*100, 0, 0);
     textObject.draw();
     render();
     current = time();
