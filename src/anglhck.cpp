@@ -35,6 +35,7 @@ int anglhck::registerToEngine(asIScriptEngine *engine)
   engine->RegisterObjectType("ImportModelParameters", sizeof(glhckImportModelParameters), asOBJ_VALUE | asOBJ_POD);
   engine->RegisterObjectProperty("ImportModelParameters", "bool animated", asOFFSET(glhckImportModelParameters, animated));
   engine->RegisterObjectProperty("ImportModelParameters", "bool flatten", asOFFSET(glhckImportModelParameters, flatten));
+  engine->RegisterGlobalFunction("const ImportModelParameters& defaultImportModelParameters()", asFUNCTION(glhckImportDefaultModelParameters), asCALL_CDECL);
 
   engine->RegisterEnum("TextureCompression");
   engine->RegisterEnumValue("TextureCompression", "COMPRESSION_NONE", GLHCK_COMPRESSION_NONE);
@@ -42,6 +43,7 @@ int anglhck::registerToEngine(asIScriptEngine *engine)
 
   engine->RegisterObjectType("ImportImageParameters", sizeof(glhckImportImageParameters), asOBJ_VALUE | asOBJ_POD);
   engine->RegisterObjectProperty("ImportImageParameters", "TextureCompression compression", asOFFSET(glhckImportImageParameters, compression));
+  engine->RegisterGlobalFunction("const ImportImageParameters& defaultImportImageParameters()", asFUNCTION(glhckImportDefaultImageParameters), asCALL_CDECL);
 
   engine->RegisterEnum("TextureWrap");
   engine->RegisterEnumValue("TextureWrap", "WRAP_REPEAT", GLHCK_WRAP_REPEAT);
@@ -85,6 +87,7 @@ int anglhck::registerToEngine(asIScriptEngine *engine)
   engine->RegisterObjectProperty("TextureParameters", "TextureCompareMode compareMode", asOFFSET(glhckTextureParameters, compareMode));
   engine->RegisterObjectProperty("TextureParameters", "TextureCompareFunc compareFunc", asOFFSET(glhckTextureParameters, compareFunc));
   engine->RegisterObjectProperty("TextureParameters", "int8 mipmap", asOFFSET(glhckTextureParameters, mipmap));
+  engine->RegisterGlobalFunction("const TextureParameters& defaultTextureParameters()", asFUNCTION(glhckTextureDefaultParameters), asCALL_CDECL);
 
   engine->RegisterObjectType("Texture", 0, asOBJ_REF);
   engine->RegisterObjectBehaviour("Texture", asBEHAVE_FACTORY, "Texture@ f(const ::string &in, const ImportImageParameters &in, const TextureParameters &in)", asFUNCTION(createTexture), asCALL_CDECL);
@@ -113,6 +116,8 @@ int anglhck::registerToEngine(asIScriptEngine *engine)
   engine->RegisterObjectMethod("Material", "const Color& get_emissive()", asFUNCTION(glhckMaterialGetEmissive), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectMethod("Material", "void set_shininess(float)", asFUNCTION(glhckMaterialShininess), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectMethod("Material", "float get_shininess()", asFUNCTION(glhckMaterialGetShininess), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Material", "void set_textureOffset(const Vec2 &in)", asFUNCTION(glhckMaterialTextureOffset), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Material", "const Vec2& get_textureOffset()", asFUNCTION(glhckMaterialGetTextureOffset), asCALL_CDECL_OBJFIRST);
 
   engine->RegisterObjectType("Object", 0, asOBJ_REF);
   engine->RegisterObjectBehaviour("Object", asBEHAVE_ADDREF, "void f()", asFUNCTION(glhckObjectRef), asCALL_CDECL_OBJFIRST);
@@ -120,13 +125,13 @@ int anglhck::registerToEngine(asIScriptEngine *engine)
   engine->RegisterObjectMethod("Object", "void draw()", asFUNCTION(glhckObjectDraw), asCALL_CDECL_OBJFIRST);
 
   engine->RegisterObjectMethod("Object", "void set_position(const Vec3 &in)", asFUNCTION(glhckObjectPosition), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("Object", "Vec3& get_position()", asFUNCTION(glhckObjectGetPosition), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Object", "const Vec3& get_position()", asFUNCTION(glhckObjectGetPosition), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectMethod("Object", "void set_rotation(const Vec3 &in)", asFUNCTION(glhckObjectRotation), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("Object", "Vec3& get_rotation()", asFUNCTION(glhckObjectGetRotation), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Object", "const Vec3& get_rotation()", asFUNCTION(glhckObjectGetRotation), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectMethod("Object", "void set_scale(const Vec3 &in)", asFUNCTION(glhckObjectScale), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("Object", "Vec3& get_scale()", asFUNCTION(glhckObjectGetScale), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Object", "const Vec3& get_scale()", asFUNCTION(glhckObjectGetScale), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectMethod("Object", "void set_target(const Vec3 &in)", asFUNCTION(glhckObjectTarget), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("Object", "Vec3& get_target()", asFUNCTION(glhckObjectGetTarget), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Object", "const Vec3& get_target()", asFUNCTION(glhckObjectGetTarget), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectMethod("Object", "void set_material(Material@)", asFUNCTION(glhckObjectMaterial), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectMethod("Object", "Material@+ get_material()", asFUNCTION(glhckObjectGetMaterial), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectMethod("Object", "void set_parent(Object@)", asFUNCTION(glhckObjectAddChild), asCALL_CDECL_OBJLAST);

@@ -1,9 +1,6 @@
 void main()
 {
-  glhck::ImportModelParameters modelParameters;
-  modelParameters.animated = false;
-  modelParameters.flatten = false;
-  
+  glhck::ImportModelParameters modelParameters = glhck::defaultImportModelParameters();
   glhck::Object@ ambulance = glhck::createModel("test/models/raf22031.ctm", 4, modelParameters);
   glhck::Camera camera;
   

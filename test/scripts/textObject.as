@@ -1,19 +1,11 @@
 void main()
 {
-  glhck::TextureParameters textureParameters;
-  textureParameters.minLod = -1000.0f;
-  textureParameters.maxLod = 1000.0f;
-  textureParameters.biasLod = 0.0f;
-  textureParameters.baseLevel = 0;
-  textureParameters.maxLevel = 1000;
+  glhck::TextureParameters textureParameters = glhck::defaultTextureParameters();
   textureParameters.wrapS = glhck::WRAP_CLAMP_TO_EDGE;
   textureParameters.wrapT = glhck::WRAP_CLAMP_TO_EDGE;
   textureParameters.wrapR = glhck::WRAP_CLAMP_TO_EDGE;
   textureParameters.minFilter = glhck::FILTER_NEAREST;
   textureParameters.magFilter = glhck::FILTER_NEAREST;
-  textureParameters.compareMode = glhck::COMPARE_NONE;
-  textureParameters.compareFunc = glhck::COMPARE_LEQUAL;
-  textureParameters.mipmap = 0;
   
   glhck::Text text(512, 128);
   text.setColor(255, 255, 255, 255);
