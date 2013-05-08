@@ -1,6 +1,6 @@
 void main()
 {
-  glhckText text(512, 128);
+  glhck::Text text(512, 128);
   text.setColor(255, 255, 255, 255);
   uint font = text.setFont("test/fonts/DejaVuSans.ttf");
 

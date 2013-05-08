@@ -1,7 +1,7 @@
 void main()
 {
-  glhckObject@ cube = createCube(1);
-  glhckCamera camera;
+  glhck::Object@ cube = glhck::createCube(1);
+  glhck::Camera camera;
   
   camera.object.setPosition(25, 25, 50);
   camera.object.target(0, 0, 0);

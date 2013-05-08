@@ -2,6 +2,7 @@
 
 #include <string>
 #include <iostream>
+#include <new>
 
 namespace
 {
@@ -29,131 +30,156 @@ namespace
   float getObjectXScale(glhckObject* object);
   float getObjectYScale(glhckObject* object);
   float getObjectZScale(glhckObject* object);
+
+  void createColor(void* memory, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
 }
 
 int anglhck::registerToEngine(asIScriptEngine *engine)
 {
-  engine->RegisterObjectType("glhckImportModelParameters", sizeof(glhckImportModelParameters), asOBJ_VALUE | asOBJ_POD);
-  engine->RegisterObjectProperty("glhckImportModelParameters", "bool animated", asOFFSET(glhckImportModelParameters, animated));
-  engine->RegisterObjectProperty("glhckImportModelParameters", "bool flatten", asOFFSET(glhckImportModelParameters, flatten));
+  std::string const previousNameSpace = engine->GetDefaultNamespace();
+  engine->SetDefaultNamespace("glhck");
 
-  engine->RegisterEnum("glhckTextureCompression");
-  engine->RegisterEnumValue("glhckTextureCompression", "GLHCK_COMPRESSION_NONE", GLHCK_COMPRESSION_NONE);
-  engine->RegisterEnumValue("glhckTextureCompression", "GLHCK_COMPRESSION_DXT", GLHCK_COMPRESSION_DXT);
+  engine->RegisterObjectType("ImportModelParameters", sizeof(glhckImportModelParameters), asOBJ_VALUE | asOBJ_POD);
+  engine->RegisterObjectProperty("ImportModelParameters", "bool animated", asOFFSET(glhckImportModelParameters, animated));
+  engine->RegisterObjectProperty("ImportModelParameters", "bool flatten", asOFFSET(glhckImportModelParameters, flatten));
 
-  engine->RegisterObjectType("glhckImportImageParameters", sizeof(glhckImportImageParameters), asOBJ_VALUE | asOBJ_POD);
-  engine->RegisterObjectProperty("glhckImportImageParameters", "glhckTextureCompression compression", asOFFSET(glhckImportImageParameters, compression));
+  engine->RegisterEnum("TextureCompression");
+  engine->RegisterEnumValue("TextureCompression", "COMPRESSION_NONE", GLHCK_COMPRESSION_NONE);
+  engine->RegisterEnumValue("TextureCompression", "COMPRESSION_DXT", GLHCK_COMPRESSION_DXT);
 
-  engine->RegisterEnum("glhckTextureWrap");
-  engine->RegisterEnumValue("glhckTextureWrap", "GLHCK_WRAP_REPEAT", GLHCK_WRAP_REPEAT);
-  engine->RegisterEnumValue("glhckTextureWrap", "GLHCK_WRAP_MIRRORED_REPEAT", GLHCK_WRAP_MIRRORED_REPEAT);
-  engine->RegisterEnumValue("glhckTextureWrap", "GLHCK_WRAP_CLAMP_TO_EDGE", GLHCK_WRAP_CLAMP_TO_EDGE);
-  engine->RegisterEnumValue("glhckTextureWrap", "GLHCK_WRAP_CLAMP_TO_BORDER", GLHCK_WRAP_CLAMP_TO_BORDER);
+  engine->RegisterObjectType("ImportImageParameters", sizeof(glhckImportImageParameters), asOBJ_VALUE | asOBJ_POD);
+  engine->RegisterObjectProperty("ImportImageParameters", "TextureCompression compression", asOFFSET(glhckImportImageParameters, compression));
 
-  engine->RegisterEnum("glhckTextureFilter");
-  engine->RegisterEnumValue("glhckTextureFilter", "GLHCK_FILTER_NEAREST", GLHCK_FILTER_NEAREST);
-  engine->RegisterEnumValue("glhckTextureFilter", "GLHCK_FILTER_LINEAR", GLHCK_FILTER_LINEAR);
-  engine->RegisterEnumValue("glhckTextureFilter", "GLHCK_FILTER_NEAREST_MIPMAP_NEAREST", GLHCK_FILTER_NEAREST_MIPMAP_NEAREST);
-  engine->RegisterEnumValue("glhckTextureFilter", "GLHCK_FILTER_LINEAR_MIPMAP_NEAREST", GLHCK_FILTER_LINEAR_MIPMAP_NEAREST);
-  engine->RegisterEnumValue("glhckTextureFilter", "GLHCK_FILTER_NEAREST_MIPMAP_LINEAR", GLHCK_FILTER_NEAREST_MIPMAP_LINEAR);
-  engine->RegisterEnumValue("glhckTextureFilter", "GLHCK_FILTER_LINEAR_MIPMAP_LINEAR", GLHCK_FILTER_LINEAR_MIPMAP_LINEAR);
+  engine->RegisterEnum("TextureWrap");
+  engine->RegisterEnumValue("TextureWrap", "WRAP_REPEAT", GLHCK_WRAP_REPEAT);
+  engine->RegisterEnumValue("TextureWrap", "WRAP_MIRRORED_REPEAT", GLHCK_WRAP_MIRRORED_REPEAT);
+  engine->RegisterEnumValue("TextureWrap", "WRAP_CLAMP_TO_EDGE", GLHCK_WRAP_CLAMP_TO_EDGE);
+  engine->RegisterEnumValue("TextureWrap", "WRAP_CLAMP_TO_BORDER", GLHCK_WRAP_CLAMP_TO_BORDER);
 
-  engine->RegisterEnum("glhckTextureCompareMode");
-  engine->RegisterEnumValue("glhckTextureCompareMode", "GLHCK_COMPARE_NONE", GLHCK_COMPARE_NONE);
-  engine->RegisterEnumValue("glhckTextureCompareMode", "GLHCK_COMPARE_REF_TO_TEXTURE", GLHCK_COMPARE_REF_TO_TEXTURE);
+  engine->RegisterEnum("TextureFilter");
+  engine->RegisterEnumValue("TextureFilter", "FILTER_NEAREST", GLHCK_FILTER_NEAREST);
+  engine->RegisterEnumValue("TextureFilter", "FILTER_LINEAR", GLHCK_FILTER_LINEAR);
+  engine->RegisterEnumValue("TextureFilter", "FILTER_NEAREST_MIPMAP_NEAREST", GLHCK_FILTER_NEAREST_MIPMAP_NEAREST);
+  engine->RegisterEnumValue("TextureFilter", "FILTER_LINEAR_MIPMAP_NEAREST", GLHCK_FILTER_LINEAR_MIPMAP_NEAREST);
+  engine->RegisterEnumValue("TextureFilter", "FILTER_NEAREST_MIPMAP_LINEAR", GLHCK_FILTER_NEAREST_MIPMAP_LINEAR);
+  engine->RegisterEnumValue("TextureFilter", "FILTER_LINEAR_MIPMAP_LINEAR", GLHCK_FILTER_LINEAR_MIPMAP_LINEAR);
 
-  engine->RegisterEnum("glhckTextureCompareFunc");
-  engine->RegisterEnumValue("glhckTextureCompareFunc", "GLHCK_COMPARE_LEQUAL", GLHCK_COMPARE_LEQUAL);
-  engine->RegisterEnumValue("glhckTextureCompareFunc", "GLHCK_COMPARE_GEQUAL", GLHCK_COMPARE_GEQUAL);
-  engine->RegisterEnumValue("glhckTextureCompareFunc", "GLHCK_COMPARE_LESS", GLHCK_COMPARE_LESS);
-  engine->RegisterEnumValue("glhckTextureCompareFunc", "GLHCK_COMPARE_GREATER", GLHCK_COMPARE_GREATER);
-  engine->RegisterEnumValue("glhckTextureCompareFunc", "GLHCK_COMPARE_EQUAL", GLHCK_COMPARE_EQUAL);
-  engine->RegisterEnumValue("glhckTextureCompareFunc", "GLHCK_COMPARE_NOTEQUAL", GLHCK_COMPARE_NOTEQUAL);
-  engine->RegisterEnumValue("glhckTextureCompareFunc", "GLHCK_COMPARE_ALWAYS", GLHCK_COMPARE_ALWAYS);
-  engine->RegisterEnumValue("glhckTextureCompareFunc", "GLHCK_COMPARE_NEVER", GLHCK_COMPARE_NEVER);
+  engine->RegisterEnum("TextureCompareMode");
+  engine->RegisterEnumValue("TextureCompareMode", "COMPARE_NONE", GLHCK_COMPARE_NONE);
+  engine->RegisterEnumValue("TextureCompareMode", "COMPARE_REF_TO_TEXTURE", GLHCK_COMPARE_REF_TO_TEXTURE);
 
-  engine->RegisterObjectType("glhckTextureParameters", sizeof(glhckTextureParameters), asOBJ_VALUE | asOBJ_POD);
-  engine->RegisterObjectProperty("glhckTextureParameters", "float minLod", asOFFSET(glhckTextureParameters, minLod));
-  engine->RegisterObjectProperty("glhckTextureParameters", "float maxLod", asOFFSET(glhckTextureParameters, maxLod));
-  engine->RegisterObjectProperty("glhckTextureParameters", "float biasLod", asOFFSET(glhckTextureParameters, biasLod));
-  engine->RegisterObjectProperty("glhckTextureParameters", "int baseLevel", asOFFSET(glhckTextureParameters, baseLevel));
-  engine->RegisterObjectProperty("glhckTextureParameters", "int maxLevel", asOFFSET(glhckTextureParameters, maxLevel));
-  engine->RegisterObjectProperty("glhckTextureParameters", "glhckTextureWrap wrapS", asOFFSET(glhckTextureParameters, wrapS));
-  engine->RegisterObjectProperty("glhckTextureParameters", "glhckTextureWrap wrapT", asOFFSET(glhckTextureParameters, wrapT));
-  engine->RegisterObjectProperty("glhckTextureParameters", "glhckTextureWrap wrapR", asOFFSET(glhckTextureParameters, wrapR));
-  engine->RegisterObjectProperty("glhckTextureParameters", "glhckTextureFilter minFilter", asOFFSET(glhckTextureParameters, minFilter));
-  engine->RegisterObjectProperty("glhckTextureParameters", "glhckTextureFilter magFilter", asOFFSET(glhckTextureParameters, magFilter));
-  engine->RegisterObjectProperty("glhckTextureParameters", "glhckTextureCompareMode compareMode", asOFFSET(glhckTextureParameters, compareMode));
-  engine->RegisterObjectProperty("glhckTextureParameters", "glhckTextureCompareFunc compareFunc", asOFFSET(glhckTextureParameters, compareFunc));
-  engine->RegisterObjectProperty("glhckTextureParameters", "int8 mipmap", asOFFSET(glhckTextureParameters, mipmap));
+  engine->RegisterEnum("TextureCompareFunc");
+  engine->RegisterEnumValue("TextureCompareFunc", "COMPARE_LEQUAL", GLHCK_COMPARE_LEQUAL);
+  engine->RegisterEnumValue("TextureCompareFunc", "COMPARE_GEQUAL", GLHCK_COMPARE_GEQUAL);
+  engine->RegisterEnumValue("TextureCompareFunc", "COMPARE_LESS", GLHCK_COMPARE_LESS);
+  engine->RegisterEnumValue("TextureCompareFunc", "COMPARE_GREATER", GLHCK_COMPARE_GREATER);
+  engine->RegisterEnumValue("TextureCompareFunc", "COMPARE_EQUAL", GLHCK_COMPARE_EQUAL);
+  engine->RegisterEnumValue("TextureCompareFunc", "COMPARE_NOTEQUAL", GLHCK_COMPARE_NOTEQUAL);
+  engine->RegisterEnumValue("TextureCompareFunc", "COMPARE_ALWAYS", GLHCK_COMPARE_ALWAYS);
+  engine->RegisterEnumValue("TextureCompareFunc", "COMPARE_NEVER", GLHCK_COMPARE_NEVER);
 
-  engine->RegisterObjectType("glhckTexture", 0, asOBJ_REF);
-  engine->RegisterObjectBehaviour("glhckTexture", asBEHAVE_FACTORY, "glhckTexture@ f(const string &in, const glhckImportImageParameters &in, const glhckTextureParameters &in)", asFUNCTION(createTexture), asCALL_CDECL);
-  engine->RegisterObjectBehaviour("glhckTexture", asBEHAVE_ADDREF, "void f()", asFUNCTION(glhckTextureRef), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectBehaviour("glhckTexture", asBEHAVE_RELEASE, "void f()", asFUNCTION(glhckTextureFree), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectType("TextureParameters", sizeof(glhckTextureParameters), asOBJ_VALUE | asOBJ_POD);
+  engine->RegisterObjectProperty("TextureParameters", "float minLod", asOFFSET(glhckTextureParameters, minLod));
+  engine->RegisterObjectProperty("TextureParameters", "float maxLod", asOFFSET(glhckTextureParameters, maxLod));
+  engine->RegisterObjectProperty("TextureParameters", "float biasLod", asOFFSET(glhckTextureParameters, biasLod));
+  engine->RegisterObjectProperty("TextureParameters", "int baseLevel", asOFFSET(glhckTextureParameters, baseLevel));
+  engine->RegisterObjectProperty("TextureParameters", "int maxLevel", asOFFSET(glhckTextureParameters, maxLevel));
+  engine->RegisterObjectProperty("TextureParameters", "TextureWrap wrapS", asOFFSET(glhckTextureParameters, wrapS));
+  engine->RegisterObjectProperty("TextureParameters", "TextureWrap wrapT", asOFFSET(glhckTextureParameters, wrapT));
+  engine->RegisterObjectProperty("TextureParameters", "TextureWrap wrapR", asOFFSET(glhckTextureParameters, wrapR));
+  engine->RegisterObjectProperty("TextureParameters", "TextureFilter minFilter", asOFFSET(glhckTextureParameters, minFilter));
+  engine->RegisterObjectProperty("TextureParameters", "TextureFilter magFilter", asOFFSET(glhckTextureParameters, magFilter));
+  engine->RegisterObjectProperty("TextureParameters", "TextureCompareMode compareMode", asOFFSET(glhckTextureParameters, compareMode));
+  engine->RegisterObjectProperty("TextureParameters", "TextureCompareFunc compareFunc", asOFFSET(glhckTextureParameters, compareFunc));
+  engine->RegisterObjectProperty("TextureParameters", "int8 mipmap", asOFFSET(glhckTextureParameters, mipmap));
 
-  engine->RegisterObjectType("glhckMaterial", 0, asOBJ_REF);
-  engine->RegisterObjectBehaviour("glhckMaterial", asBEHAVE_FACTORY, "glhckMaterial@ f(glhckTexture@)", asFUNCTION(glhckMaterialNew), asCALL_CDECL);
-  engine->RegisterObjectBehaviour("glhckMaterial", asBEHAVE_ADDREF, "void f()", asFUNCTION(glhckMaterialRef), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectBehaviour("glhckMaterial", asBEHAVE_RELEASE, "void f()", asFUNCTION(glhckMaterialFree), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectType("Texture", 0, asOBJ_REF);
+  engine->RegisterObjectBehaviour("Texture", asBEHAVE_FACTORY, "Texture@ f(const ::string &in, const ImportImageParameters &in, const TextureParameters &in)", asFUNCTION(createTexture), asCALL_CDECL);
+  engine->RegisterObjectBehaviour("Texture", asBEHAVE_ADDREF, "void f()", asFUNCTION(glhckTextureRef), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectBehaviour("Texture", asBEHAVE_RELEASE, "void f()", asFUNCTION(glhckTextureFree), asCALL_CDECL_OBJFIRST);
 
-  engine->RegisterObjectType("glhckObject", 0, asOBJ_REF);
-  engine->RegisterObjectBehaviour("glhckObject", asBEHAVE_ADDREF, "void f()", asFUNCTION(glhckObjectRef), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectBehaviour("glhckObject", asBEHAVE_RELEASE, "void f()", asFUNCTION(glhckObjectFree), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("glhckObject", "void draw()", asFUNCTION(glhckObjectDraw), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("glhckObject", "void setPosition(float x, float y, float z)", asFUNCTION(glhckObjectPositionf), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("glhckObject", "void setRotation(float x, float y, float z)", asFUNCTION(glhckObjectRotationf), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("glhckObject", "void move(float x, float y, float z)", asFUNCTION(glhckObjectMovef), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("glhckObject", "void rotate(float x, float y, float z)", asFUNCTION(glhckObjectRotatef), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("glhckObject", "void target(float x, float y, float z)", asFUNCTION(glhckObjectTargetf), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("glhckObject", "void scale(float x, float y, float z)", asFUNCTION(glhckObjectScalef), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("glhckObject", "float get_x()", asFUNCTION(getObjectX), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("glhckObject", "float get_y()", asFUNCTION(getObjectY), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("glhckObject", "float get_z()", asFUNCTION(getObjectZ), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("glhckObject", "void set_x(const float)", asFUNCTION(setObjectX), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("glhckObject", "void set_y(const float)", asFUNCTION(setObjectY), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("glhckObject", "void set_z(const float)", asFUNCTION(setObjectZ), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("glhckObject", "float get_xRotation()", asFUNCTION(getObjectXRotation), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("glhckObject", "float get_yRotation()", asFUNCTION(getObjectYRotation), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("glhckObject", "float get_zRotation()", asFUNCTION(getObjectZRotation), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("glhckObject", "void set_xRotation(const float)", asFUNCTION(setObjectXRotation), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("glhckObject", "void set_yRotation(const float)", asFUNCTION(setObjectYRotation), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("glhckObject", "void set_zRotation(const float)", asFUNCTION(setObjectZRotation), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("glhckObject", "float get_xScale()", asFUNCTION(getObjectXScale), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("glhckObject", "float get_yScale()", asFUNCTION(getObjectYScale), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("glhckObject", "float get_zScale()", asFUNCTION(getObjectZScale), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("glhckObject", "void set_xScale(const float)", asFUNCTION(setObjectXScale), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("glhckObject", "void set_yScale(const float)", asFUNCTION(setObjectYScale), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("glhckObject", "void set_zScale(const float)", asFUNCTION(setObjectZScale), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectType("Color", sizeof(glhckColorb), asOBJ_VALUE | asOBJ_POD);
+  engine->RegisterObjectBehaviour("Color", asBEHAVE_CONSTRUCT, "void f(uint8 r, uint8 g, uint8 b, uint8 a)", asFUNCTION(createColor), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectProperty("Color", "uint8 r", asOFFSET(glhckColorb, r));
+  engine->RegisterObjectProperty("Color", "uint8 g", asOFFSET(glhckColorb, g));
+  engine->RegisterObjectProperty("Color", "uint8 b", asOFFSET(glhckColorb, b));
+  engine->RegisterObjectProperty("Color", "uint8 a", asOFFSET(glhckColorb, a));
 
-  engine->RegisterObjectMethod("glhckObject", "void set_material(glhckMaterial@)", asFUNCTION(glhckObjectMaterial), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("glhckObject", "glhckMaterial@+ get_material()", asFUNCTION(glhckObjectGetMaterial), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectType("Material", 0, asOBJ_REF);
+  engine->RegisterObjectBehaviour("Material", asBEHAVE_FACTORY, "Material@ f(Texture@)", asFUNCTION(glhckMaterialNew), asCALL_CDECL);
+  engine->RegisterObjectBehaviour("Material", asBEHAVE_ADDREF, "void f()", asFUNCTION(glhckMaterialRef), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectBehaviour("Material", asBEHAVE_RELEASE, "void f()", asFUNCTION(glhckMaterialFree), asCALL_CDECL_OBJFIRST);
 
-  engine->RegisterObjectMethod("glhckObject", "void set_parent(glhckObject@)", asFUNCTION(glhckObjectAddChild), asCALL_CDECL_OBJLAST);
-  engine->RegisterObjectMethod("glhckObject", "glhckObject@+ get_parent()", asFUNCTION(glhckObjectParent), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Material", "void set_diffuse(const Color &in)", asFUNCTION(glhckMaterialDiffuse), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Material", "const Color& get_diffuse()", asFUNCTION(glhckMaterialGetDiffuse), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Material", "void set_specular(const Color &in)", asFUNCTION(glhckMaterialSpecular), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Material", "const Color& get_specular()", asFUNCTION(glhckMaterialGetSpecular), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Material", "void set_ambient(const Color &in)", asFUNCTION(glhckMaterialAmbient), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Material", "const Color& get_ambient()", asFUNCTION(glhckMaterialGetAmbient), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Material", "void set_emissive(const Color &in)", asFUNCTION(glhckMaterialEmissive), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Material", "const Color& get_emissive()", asFUNCTION(glhckMaterialGetEmissive), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Material", "void set_shininess(float)", asFUNCTION(glhckMaterialShininess), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Material", "float get_shininess()", asFUNCTION(glhckMaterialGetShininess), asCALL_CDECL_OBJFIRST);
 
-  engine->RegisterGlobalFunction("glhckObject@ createCube(const float)", asFUNCTION(glhckCubeNew), asCALL_CDECL);
-  engine->RegisterGlobalFunction("glhckObject@ createSprite(glhckTexture@ texture, const float width, const float height)", asFUNCTION(glhckSpriteNew), asCALL_CDECL);
-  engine->RegisterGlobalFunction("glhckObject@ createModel(const string &in, const float, const glhckImportModelParameters &in)", asFUNCTION(createModel), asCALL_CDECL);
+  engine->RegisterObjectType("Object", 0, asOBJ_REF);
+  engine->RegisterObjectBehaviour("Object", asBEHAVE_ADDREF, "void f()", asFUNCTION(glhckObjectRef), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectBehaviour("Object", asBEHAVE_RELEASE, "void f()", asFUNCTION(glhckObjectFree), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Object", "void draw()", asFUNCTION(glhckObjectDraw), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Object", "void setPosition(float x, float y, float z)", asFUNCTION(glhckObjectPositionf), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Object", "void setRotation(float x, float y, float z)", asFUNCTION(glhckObjectRotationf), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Object", "void move(float x, float y, float z)", asFUNCTION(glhckObjectMovef), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Object", "void rotate(float x, float y, float z)", asFUNCTION(glhckObjectRotatef), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Object", "void target(float x, float y, float z)", asFUNCTION(glhckObjectTargetf), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Object", "void scale(float x, float y, float z)", asFUNCTION(glhckObjectScalef), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Object", "float get_x()", asFUNCTION(getObjectX), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Object", "float get_y()", asFUNCTION(getObjectY), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Object", "float get_z()", asFUNCTION(getObjectZ), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Object", "void set_x(const float)", asFUNCTION(setObjectX), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Object", "void set_y(const float)", asFUNCTION(setObjectY), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Object", "void set_z(const float)", asFUNCTION(setObjectZ), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Object", "float get_xRotation()", asFUNCTION(getObjectXRotation), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Object", "float get_yRotation()", asFUNCTION(getObjectYRotation), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Object", "float get_zRotation()", asFUNCTION(getObjectZRotation), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Object", "void set_xRotation(const float)", asFUNCTION(setObjectXRotation), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Object", "void set_yRotation(const float)", asFUNCTION(setObjectYRotation), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Object", "void set_zRotation(const float)", asFUNCTION(setObjectZRotation), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Object", "float get_xScale()", asFUNCTION(getObjectXScale), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Object", "float get_yScale()", asFUNCTION(getObjectYScale), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Object", "float get_zScale()", asFUNCTION(getObjectZScale), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Object", "void set_xScale(const float)", asFUNCTION(setObjectXScale), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Object", "void set_yScale(const float)", asFUNCTION(setObjectYScale), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Object", "void set_zScale(const float)", asFUNCTION(setObjectZScale), asCALL_CDECL_OBJFIRST);
 
-  engine->RegisterObjectType("glhckCamera", 0, asOBJ_REF);
-  engine->RegisterObjectBehaviour("glhckCamera", asBEHAVE_FACTORY, "glhckCamera@ f()", asFUNCTION(glhckCameraNew), asCALL_CDECL);
-  engine->RegisterObjectBehaviour("glhckCamera", asBEHAVE_ADDREF, "void f()", asFUNCTION(glhckCameraRef), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectBehaviour("glhckCamera", asBEHAVE_RELEASE, "void f()", asFUNCTION(glhckCameraFree), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("glhckCamera", "glhckObject@+ get_object()", asFUNCTION(glhckCameraGetObject), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("glhckCamera", "void update()", asFUNCTION(glhckCameraUpdate), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Object", "void set_material(Material@)", asFUNCTION(glhckObjectMaterial), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Object", "Material@+ get_material()", asFUNCTION(glhckObjectGetMaterial), asCALL_CDECL_OBJFIRST);
 
-  engine->RegisterObjectType("glhckText", 0, asOBJ_REF);
-  engine->RegisterObjectBehaviour("glhckText", asBEHAVE_FACTORY, "glhckText@ f(const int, const int)", asFUNCTION(glhckTextNew), asCALL_CDECL);
-  engine->RegisterObjectBehaviour("glhckText", asBEHAVE_ADDREF, "void f()", asFUNCTION(glhckTextRef), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectBehaviour("glhckText", asBEHAVE_RELEASE, "void f()", asFUNCTION(glhckTextFree), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("glhckText", "uint setFont(const string &in)", asFUNCTION(setTextFont), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("glhckText", "void setColor(const uint8, const uint8, const uint8, const uint8)", asFUNCTION(glhckTextColor), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("glhckText", "float stash(const uint, const float, const float, const float, const string)", asFUNCTION(stashText), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("glhckText", "void draw()", asFUNCTION(glhckTextRender), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("glhckText", "void clear()", asFUNCTION(glhckTextClear), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Object", "void set_parent(Object@)", asFUNCTION(glhckObjectAddChild), asCALL_CDECL_OBJLAST);
+  engine->RegisterObjectMethod("Object", "Object@+ get_parent()", asFUNCTION(glhckObjectParent), asCALL_CDECL_OBJFIRST);
 
-  engine->RegisterGlobalFunction("glhckObject@ createTextObject(glhckText@, const uint8, const float, const string &in, const glhckTextureParameters &in)", asFUNCTION(createTextObject), asCALL_CDECL);
+  engine->RegisterGlobalFunction("Object@ createCube(const float)", asFUNCTION(glhckCubeNew), asCALL_CDECL);
+  engine->RegisterGlobalFunction("Object@ createSprite(Texture@ texture, const float width, const float height)", asFUNCTION(glhckSpriteNew), asCALL_CDECL);
+  engine->RegisterGlobalFunction("Object@ createModel(const ::string &in, const float, const ImportModelParameters &in)", asFUNCTION(createModel), asCALL_CDECL);
+
+  engine->RegisterObjectType("Camera", 0, asOBJ_REF);
+  engine->RegisterObjectBehaviour("Camera", asBEHAVE_FACTORY, "Camera@ f()", asFUNCTION(glhckCameraNew), asCALL_CDECL);
+  engine->RegisterObjectBehaviour("Camera", asBEHAVE_ADDREF, "void f()", asFUNCTION(glhckCameraRef), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectBehaviour("Camera", asBEHAVE_RELEASE, "void f()", asFUNCTION(glhckCameraFree), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Camera", "Object@+ get_object()", asFUNCTION(glhckCameraGetObject), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Camera", "void update()", asFUNCTION(glhckCameraUpdate), asCALL_CDECL_OBJFIRST);
+
+  engine->RegisterObjectType("Text", 0, asOBJ_REF);
+  engine->RegisterObjectBehaviour("Text", asBEHAVE_FACTORY, "Text@ f(const int, const int)", asFUNCTION(glhckTextNew), asCALL_CDECL);
+  engine->RegisterObjectBehaviour("Text", asBEHAVE_ADDREF, "void f()", asFUNCTION(glhckTextRef), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectBehaviour("Text", asBEHAVE_RELEASE, "void f()", asFUNCTION(glhckTextFree), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Text", "uint setFont(const ::string &in)", asFUNCTION(setTextFont), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Text", "void setColor(const uint8, const uint8, const uint8, const uint8)", asFUNCTION(glhckTextColor), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Text", "float stash(const uint, const float, const float, const float, const ::string)", asFUNCTION(stashText), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Text", "void draw()", asFUNCTION(glhckTextRender), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Text", "void clear()", asFUNCTION(glhckTextClear), asCALL_CDECL_OBJFIRST);
+
+  engine->RegisterGlobalFunction("Object@ createTextObject(Text@, const uint8, const float, const ::string &in, const TextureParameters &in)", asFUNCTION(createTextObject), asCALL_CDECL);
+
+  engine->SetDefaultNamespace(previousNameSpace.data());
 
   return 0;
 }
@@ -285,5 +311,11 @@ namespace
   float getObjectZScale(glhckObject* object)
   {
     return glhckObjectGetScale(object)->z;
+  }
+
+  void createColor(void* memory, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+  {
+    glhckColorb* color = static_cast<glhckColorb*>(memory);
+    *color = {r, g, b, a};
   }
 }
