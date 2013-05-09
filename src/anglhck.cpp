@@ -17,6 +17,7 @@ namespace
   void createVec3(void* memory, float x, float y, float z);
   void createVec2(void* memory, float x, float y);
 
+  template<typename T, typename R, R* (*fp)(T, unsigned int*)> CScriptArray* getArray(T t, char const* arrayTypeString);
   CScriptArray* getObjectChildren(glhckObject* o);
 }
 
@@ -218,24 +219,29 @@ namespace
     *v = {x, y};
   }
 
-  CScriptArray* getObjectChildren(glhckObject* o)
-  {
+  template<typename T, typename R, R* (*fp)(T, unsigned int*)>
+  CScriptArray* getArray(T t, char const* arrayTypeString) {
     asIScriptContext* ctx = asGetActiveContext();
 
     if(ctx != nullptr)
     {
       asIScriptEngine* engine = ctx->GetEngine();
       unsigned int num = 0;
-      glhckObject** childArray = glhckObjectChildren(o, &num);
-      asIObjectType* arrayType = engine->GetObjectTypeById(engine->GetTypeIdByDecl("array<glhck::Object@>"));
-      CScriptArray* children = new CScriptArray(num, arrayType);
+      R* resultArray = (fp)(t, &num);
+      asIObjectType* arrayType = engine->GetObjectTypeById(engine->GetTypeIdByDecl(arrayTypeString));
+      CScriptArray* results = new CScriptArray(num, arrayType);
       for(unsigned int i = 0; i < num; ++i)
       {
-        glhckObject* child = childArray[i];
-        children->SetValue(i, &child);
+        R result = resultArray[i];
+        results->SetValue(i, &result);
       }
-      return children;
+      return results;
     }
     return nullptr;
+  }
+
+  CScriptArray* getObjectChildren(glhckObject* o)
+  {
+    return getArray<glhckObject*, glhckObject*, glhckObjectChildren>(o, "array<glhck::Object@>");
   }
 }
