@@ -34,8 +34,8 @@ void main()
     child.rotation = glhck::Vec3(0, 0, t*360/2);
     
     sprite.draw();
-    child.draw();
-    child2.draw();
+    sprite.children[0].draw();
+    sprite.children[0].children[0].draw();
     render();
     current = time();
   } while(current - start < 5);

@@ -140,7 +140,7 @@ int anglhck::registerToEngine(asIScriptEngine *engine)
   engine->RegisterObjectMethod("Object", "Material@+ get_material()", asFUNCTION(glhckObjectGetMaterial), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectMethod("Object", "void set_parent(Object@)", asFUNCTION(glhckObjectAddChild), asCALL_CDECL_OBJLAST);
   engine->RegisterObjectMethod("Object", "Object@+ get_parent()", asFUNCTION(glhckObjectParent), asCALL_CDECL_OBJFIRST);
-  //engine->RegisterObjectMethod("Object",  "array<glhck::Object@> getChildren()", asFUNCTION(getObjectChildren), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Object",  "array<glhck::Object@>@ get_children()", asFUNCTION(getObjectChildren), asCALL_CDECL_OBJFIRST);
 
   engine->RegisterGlobalFunction("Object@ createCube(const float)", asFUNCTION(glhckCubeNew), asCALL_CDECL);
   engine->RegisterGlobalFunction("Object@ createSprite(Texture@ texture, const float width, const float height)", asFUNCTION(glhckSpriteNew), asCALL_CDECL);
@@ -229,16 +229,13 @@ namespace
       glhckObject** childArray = glhckObjectChildren(o, &num);
       asIObjectType* arrayType = engine->GetObjectTypeById(engine->GetTypeIdByDecl("array<glhck::Object@>"));
       CScriptArray* children = new CScriptArray(num, arrayType);
-
       for(unsigned int i = 0; i < num; ++i)
       {
         glhckObject* child = childArray[i];
-        children->SetValue(i, child);
+        children->SetValue(i, &child);
       }
-
       return children;
     }
-
     return nullptr;
   }
 }
