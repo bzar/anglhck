@@ -3,6 +3,7 @@
 
 #include "scriptbuilder/scriptbuilder.h"
 #include "scriptstdstring/scriptstdstring.h"
+#include "scriptarray/scriptarray.h"
 
 #include <cstdlib>
 #include <iostream>
@@ -62,6 +63,7 @@ void run(std::string const& scriptFile)
 
   std::cout << "-- Registering objects and functions" << std::endl;
   RegisterStdString(engine);
+  RegisterScriptArray(engine, true);
   anglhck::registerToEngine(engine);
 
   engine->RegisterGlobalFunction("void print(const string &in)", asFUNCTION(print), asCALL_CDECL);

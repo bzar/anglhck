@@ -32,7 +32,7 @@ void main()
   {
     float t = current - start;
     ambulance.rotation = glhck::Vec3(0, t * 180, 0);
-    lava.material.textureOffset = glhck::Vec2(t, t);
+    lava.material.textureOffset = glhck::Vec2(t * 0.05, t * 0.05);
     ambulance.draw();
     lava.draw();
     render();

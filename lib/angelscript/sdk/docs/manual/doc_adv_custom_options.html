@@ -62,6 +62,8 @@ Registerable types</h1>
 Language modifications</h1>
 <p>The engine method <a class="el" href="classas_i_script_engine.html#a1bce4e5f573a2ca0ff55163e28f761dd">SetEngineProperty</a> permits making runtime choices about several different behaviours in the engine.</p>
 <p>The following modify the script language in one way or the other:</p>
+<p><a class="el" href="angelscript_8h.html#a53c2e8a74ade77c928316396394ebe0fa563bec877e91b0646c47197b2ae7ac0c">asEP_DISALLOW_VALUE_ASSIGN_FOR_REF_TYPE</a></p>
+<p>By turning on this the compiler will no longer allow the use of value assignment operators on reference types. While it may seem drastic, it can help reduce risk for bugs in the scripts, as the script writer will no longer be able to do a value assignment by mistake when he meant to a handle assignment. Reference types should usually not be copied, so the imposed restriction will likely not cause problems anyway.</p>
 <p><a class="el" href="angelscript_8h.html#a53c2e8a74ade77c928316396394ebe0fa8facaf887921a6b26e5a1f06e01ec37a">asEP_ALLOW_UNSAFE_REFERENCES</a></p>
 <p>By turning on unsafe references you allow in-out references to be used for primitives and value types too. Normally this will work fine, just as it does in ordinary languages such as C++, but know that it is quite possible to write scripts that will cause memory invasions or crashes if the references are not properly guarded. With this option turned on you cannot consider the scripts to be sand-boxed any longer.</p>
 <p><a class="el" href="angelscript_8h.html#a53c2e8a74ade77c928316396394ebe0fa6dc1c33f9227c66f18fc0f95a0c798b2">asEP_USE_CHARACTER_LITERALS</a>, <a class="el" href="angelscript_8h.html#a53c2e8a74ade77c928316396394ebe0fa218fdf7e181bf9ee0498112f5a87c415">asEP_ALLOW_MULTILINE_STRINGS</a>, <a class="el" href="angelscript_8h.html#a53c2e8a74ade77c928316396394ebe0fa02405d96a12b81aa816986b22bf752c2">asEP_SCRIPT_SCANNER</a>, <a class="el" href="angelscript_8h.html#a53c2e8a74ade77c928316396394ebe0fab6daa2ae0c712da7f6f16d698305fba1">asEP_STRING_ENCODING</a></p>
@@ -106,7 +108,7 @@ Engine behaviours</h1>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Sun Mar 31 2013 15:47:53 for AngelScript by
+    <li class="footer">Generated on Wed May 8 2013 21:42:02 for AngelScript by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.3.1 </li>
   </ul>

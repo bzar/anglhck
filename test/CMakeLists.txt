@@ -10,8 +10,6 @@ include_directories(
   ${anglhck_SOURCE_DIR}/include
 )
 
-set(AS_ADDONS ${Angelscript_SOURCE_DIR}/../../../add_on/)
-
 add_executable(simple
     simple.cpp
     ${AS_ADDONS}/scriptbuilder/scriptbuilder.cpp
@@ -25,6 +23,7 @@ add_executable(anglhck_run
     ${AS_ADDONS}/scriptbuilder/scriptbuilder.cpp
     ${AS_ADDONS}/scripthandle/scripthandle.cpp
     ${AS_ADDONS}/scriptstdstring/scriptstdstring.cpp
+    ${AS_ADDONS}/scriptarray/scriptarray.cpp
 )
 target_link_libraries(anglhck_run anglhck glfw ${GLFW_LIBRARIES})
 

@@ -53,7 +53,8 @@ $(document).ready(function(){initNavTree('doc_register_type.html','');});
 <div class="title">Registering an object type </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p>The are two principal paths to take when registering a new type, either the type is a reference type that is located in dynamic memory, or the type is a value type that is located on the stack. Complex types are usually registered as reference types, while simple types that are meant to be used as primitives are registered as value types. A reference type support object handles (unless restricted by application), but cannot be passed by value to application registered functions, a value type doesn't support handles and can be passed by value to application registered functions.</p>
+<div class="textblock"><p>The are two principal paths to take when registering a new type, either the type is a reference type that is located in dynamic memory, or the type is a value type that is located on the stack or locally as members of other objects. A reference type support object handles (unless restricted by application), but cannot be passed by value to application registered functions, a value type doesn't support handles and can be passed by value to application registered functions.</p>
+<p>There is no given rule when to use one or the other, but in general you'll use reference types when the type must be able to outlive the scope in which it is created, and value types when the type is normally used to perform quick calculations after which the object can be discarded. If the type is large or complex, then it is likely it should be a reference type.</p>
 <ul>
 <li><a class="el" href="doc_reg_basicref.html">Registering a reference type</a></li>
 <li><a class="el" href="doc_register_val_type.html">Registering a value type</a></li>
@@ -66,7 +67,7 @@ $(document).ready(function(){initNavTree('doc_register_type.html','');});
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Sun Mar 31 2013 15:47:54 for AngelScript by
+    <li class="footer">Generated on Wed May 8 2013 21:42:03 for AngelScript by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.3.1 </li>
   </ul>

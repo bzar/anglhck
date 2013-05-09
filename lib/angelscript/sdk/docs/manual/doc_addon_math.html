@@ -78,13 +78,17 @@ Public script interface</h1>
   float abs(float val);</pre><pre>  // Ceil and floor functions
   float ceil(float val);
   float floor(float val);</pre><pre>  // Returns the fraction
-  float fraction(float val);</pre><pre>  // This type represents a complex number with real and imaginary parts
+  float fraction(float val);</pre><pre>  // Conversion between floating point and IEEE 754 representations
+  float  fpFromIEEE(uint raw); 
+  double fpFromIEEE(uint64 raw);
+  uint   fpToIEEE(float fp);
+  uint64 fpToIEEE(double fp);</pre><pre>  // This type represents a complex number with real and imaginary parts
   class complex
   {
     // Constructors
     complex();
     complex(const complex &amp;in);
-        complex(float r);
+    complex(float r);
     complex(float r, float i);</pre><pre>    // Equality operator
     bool opEquals(const complex &amp;in) const;</pre><pre>    // Compound assignment operators
     complex &amp;opAddAssign(const complex &amp;in);
@@ -108,7 +112,7 @@ Public script interface</h1>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Sun Mar 31 2013 15:47:53 for AngelScript by
+    <li class="footer">Generated on Wed May 8 2013 21:42:02 for AngelScript by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.3.1 </li>
   </ul>

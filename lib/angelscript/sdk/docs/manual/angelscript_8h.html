@@ -112,8 +112,8 @@ Classes</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
 Macros</h2></td></tr>
 <tr class="memitem:a99c6b8b0882e45e5d0b2ed19f6f7a157"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a99c6b8b0882e45e5d0b2ed19f6f7a157"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="angelscript_8h.html#a99c6b8b0882e45e5d0b2ed19f6f7a157">ANGELSCRIPT_VERSION</a>&#160;&#160;&#160;22602</td></tr>
-<tr class="memdesc:a99c6b8b0882e45e5d0b2ed19f6f7a157"><td class="mdescLeft">&#160;</td><td class="mdescRight">Version 2.26.2. <br/></td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="angelscript_8h.html#a99c6b8b0882e45e5d0b2ed19f6f7a157">ANGELSCRIPT_VERSION</a>&#160;&#160;&#160;22603</td></tr>
+<tr class="memdesc:a99c6b8b0882e45e5d0b2ed19f6f7a157"><td class="mdescLeft">&#160;</td><td class="mdescRight">Version 2.26.3. <br/></td></tr>
 <tr class="separator:a99c6b8b0882e45e5d0b2ed19f6f7a157"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a717eccea17214bc1eb64bb9789c4915a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a717eccea17214bc1eb64bb9789c4915a"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="angelscript_8h.html#a717eccea17214bc1eb64bb9789c4915a">asOFFSET</a>(s, m)&#160;&#160;&#160;((size_t)(&amp;reinterpret_cast&lt;s*&gt;(100000)-&gt;m)-100000)</td></tr>
@@ -281,7 +281,9 @@ Enumerations</h2></td></tr>
 <br/>
 &#160;&#160;<a class="el" href="angelscript_8h.html#a53c2e8a74ade77c928316396394ebe0fa6d80b60995ad046918b2376d7d79f2af">asEP_ALWAYS_IMPL_DEFAULT_CONSTRUCT</a> = 18, 
 <br/>
-&#160;&#160;<a class="el" href="angelscript_8h.html#a53c2e8a74ade77c928316396394ebe0fadd96da828860b5de2352de07c2456633">asEP_COMPILER_WARNINGS</a> = 19
+&#160;&#160;<a class="el" href="angelscript_8h.html#a53c2e8a74ade77c928316396394ebe0fadd96da828860b5de2352de07c2456633">asEP_COMPILER_WARNINGS</a> = 19, 
+<br/>
+&#160;&#160;<a class="el" href="angelscript_8h.html#a53c2e8a74ade77c928316396394ebe0fa563bec877e91b0646c47197b2ae7ac0c">asEP_DISALLOW_VALUE_ASSIGN_FOR_REF_TYPE</a> = 20
 <br/>
  }</td></tr>
 <tr class="memdesc:a53c2e8a74ade77c928316396394ebe0f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Engine properties.  <a href="angelscript_8h.html#a53c2e8a74ade77c928316396394ebe0f">More...</a><br/></td></tr>
@@ -617,7 +619,9 @@ Enumerations</h2></td></tr>
 <br/>
 &#160;&#160;<a class="el" href="angelscript_8h.html#a06fb2a1ebf5d007e0d542abced1b648fa73c9b6201770e89cb90212c793ca5173">asFUNC_FUNCDEF</a> = 4, 
 <br/>
-&#160;&#160;<a class="el" href="angelscript_8h.html#a06fb2a1ebf5d007e0d542abced1b648fa9c44f646079e0592316cf5892e33d0ec">asFUNC_IMPORTED</a> = 5
+&#160;&#160;<a class="el" href="angelscript_8h.html#a06fb2a1ebf5d007e0d542abced1b648fa9c44f646079e0592316cf5892e33d0ec">asFUNC_IMPORTED</a> = 5, 
+<br/>
+&#160;&#160;<a class="el" href="angelscript_8h.html#a06fb2a1ebf5d007e0d542abced1b648fa02773b148f9c6fb3ed5d945a940f302a">asFUNC_DELEGATE</a> = 6
 <br/>
  }</td></tr>
 <tr class="memdesc:a06fb2a1ebf5d007e0d542abced1b648f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function types.  <a href="angelscript_8h.html#a06fb2a1ebf5d007e0d542abced1b648f">More...</a><br/></td></tr>
@@ -2006,6 +2010,9 @@ const <a class="el" href="structas_s_b_c_info.html">asSBCInfo</a>&#160;</td><td 
 <tr><td class="fieldname"><em><a class="anchor" id="a53c2e8a74ade77c928316396394ebe0fadd96da828860b5de2352de07c2456633"></a>asEP_COMPILER_WARNINGS</em>&nbsp;</td><td class="fielddoc">
 <p>Set how warnings should be treated: 0 - dismiss, 1 - emit, 2 - treat as error. </p>
 </td></tr>
+<tr><td class="fieldname"><em><a class="anchor" id="a53c2e8a74ade77c928316396394ebe0fa563bec877e91b0646c47197b2ae7ac0c"></a>asEP_DISALLOW_VALUE_ASSIGN_FOR_REF_TYPE</em>&nbsp;</td><td class="fielddoc">
+<p>Disallow value assignment for reference types to avoid ambiguity. Default: false. </p>
+</td></tr>
 </table>
 
 </div>
@@ -2037,6 +2044,9 @@ const <a class="el" href="structas_s_b_c_info.html">asSBCInfo</a>&#160;</td><td 
 </td></tr>
 <tr><td class="fieldname"><em><a class="anchor" id="a06fb2a1ebf5d007e0d542abced1b648fa9c44f646079e0592316cf5892e33d0ec"></a>asFUNC_IMPORTED</em>&nbsp;</td><td class="fielddoc">
 <p>An imported function. </p>
+</td></tr>
+<tr><td class="fieldname"><em><a class="anchor" id="a06fb2a1ebf5d007e0d542abced1b648fa02773b148f9c6fb3ed5d945a940f302a"></a>asFUNC_DELEGATE</em>&nbsp;</td><td class="fielddoc">
+<p>A function delegate. </p>
 </td></tr>
 </table>
 
@@ -2806,7 +2816,7 @@ const <a class="el" href="structas_s_b_c_info.html">asSBCInfo</a>&#160;</td><td 
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_b2f33c71d4aa5e7af42a1ca61ff5af1b.html">source</a></li><li class="navelem"><a class="el" href="angelscript_8h.html">angelscript.h</a></li>
-    <li class="footer">Generated on Sun Mar 31 2013 15:47:53 for AngelScript by
+    <li class="footer">Generated on Wed May 8 2013 21:42:02 for AngelScript by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.3.1 </li>
   </ul>

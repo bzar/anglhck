@@ -3,6 +3,8 @@
 #include <string>
 #include <iostream>
 
+#include "scriptarray/scriptarray.h"
+
 namespace
 {
   glhckTexture* createTexture(std::string const& filename, const glhckImportImageParameters& importParameters, const glhckTextureParameters& parameters);
@@ -90,7 +92,7 @@ int anglhck::registerToEngine(asIScriptEngine *engine)
   engine->RegisterGlobalFunction("const TextureParameters& defaultTextureParameters()", asFUNCTION(glhckTextureDefaultParameters), asCALL_CDECL);
 
   engine->RegisterObjectType("Texture", 0, asOBJ_REF);
-  engine->RegisterObjectBehaviour("Texture", asBEHAVE_FACTORY, "Texture@ f(const ::string &in, const ImportImageParameters &in, const TextureParameters &in)", asFUNCTION(createTexture), asCALL_CDECL);
+  engine->RegisterObjectBehaviour("Texture", asBEHAVE_FACTORY, "Texture@ f(const string &in, const ImportImageParameters &in, const TextureParameters &in)", asFUNCTION(createTexture), asCALL_CDECL);
   engine->RegisterObjectBehaviour("Texture", asBEHAVE_ADDREF, "void f()", asFUNCTION(glhckTextureRef), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectBehaviour("Texture", asBEHAVE_RELEASE, "void f()", asFUNCTION(glhckTextureFree), asCALL_CDECL_OBJFIRST);
 
@@ -139,7 +141,7 @@ int anglhck::registerToEngine(asIScriptEngine *engine)
 
   engine->RegisterGlobalFunction("Object@ createCube(const float)", asFUNCTION(glhckCubeNew), asCALL_CDECL);
   engine->RegisterGlobalFunction("Object@ createSprite(Texture@ texture, const float width, const float height)", asFUNCTION(glhckSpriteNew), asCALL_CDECL);
-  engine->RegisterGlobalFunction("Object@ createModel(const ::string &in, const float, const ImportModelParameters &in)", asFUNCTION(createModel), asCALL_CDECL);
+  engine->RegisterGlobalFunction("Object@ createModel(const string &in, const float, const ImportModelParameters &in)", asFUNCTION(createModel), asCALL_CDECL);
 
   engine->RegisterObjectType("Camera", 0, asOBJ_REF);
   engine->RegisterObjectBehaviour("Camera", asBEHAVE_FACTORY, "Camera@ f()", asFUNCTION(glhckCameraNew), asCALL_CDECL);
@@ -152,13 +154,13 @@ int anglhck::registerToEngine(asIScriptEngine *engine)
   engine->RegisterObjectBehaviour("Text", asBEHAVE_FACTORY, "Text@ f(const int, const int)", asFUNCTION(glhckTextNew), asCALL_CDECL);
   engine->RegisterObjectBehaviour("Text", asBEHAVE_ADDREF, "void f()", asFUNCTION(glhckTextRef), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectBehaviour("Text", asBEHAVE_RELEASE, "void f()", asFUNCTION(glhckTextFree), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("Text", "uint setFont(const ::string &in)", asFUNCTION(setTextFont), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Text", "uint setFont(const string &in)", asFUNCTION(setTextFont), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectMethod("Text", "void setColor(const uint8, const uint8, const uint8, const uint8)", asFUNCTION(glhckTextColor), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("Text", "float stash(const uint, const float, const float, const float, const ::string)", asFUNCTION(stashText), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Text", "float stash(const uint, const float, const float, const float, const string)", asFUNCTION(stashText), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectMethod("Text", "void draw()", asFUNCTION(glhckTextRender), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectMethod("Text", "void clear()", asFUNCTION(glhckTextClear), asCALL_CDECL_OBJFIRST);
 
-  engine->RegisterGlobalFunction("Object@ createTextObject(Text@, const uint8, const float, const ::string &in, const TextureParameters &in)", asFUNCTION(createTextObject), asCALL_CDECL);
+  engine->RegisterGlobalFunction("Object@ createTextObject(Text@, const uint8, const float, const string &in, const TextureParameters &in)", asFUNCTION(createTextObject), asCALL_CDECL);
 
   engine->SetDefaultNamespace(previousNameSpace.data());
 
@@ -211,5 +213,4 @@ namespace
     kmVec2* v = static_cast<kmVec2*>(memory);
     *v = {x, y};
   }
-
 }
