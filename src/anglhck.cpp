@@ -16,6 +16,8 @@ namespace
   void createColor(void* memory, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
   void createVec3(void* memory, float x, float y, float z);
   void createVec2(void* memory, float x, float y);
+
+  CScriptArray* getObjectChildren(glhckObject* o);
 }
 
 int anglhck::registerToEngine(asIScriptEngine *engine)
@@ -138,6 +140,7 @@ int anglhck::registerToEngine(asIScriptEngine *engine)
   engine->RegisterObjectMethod("Object", "Material@+ get_material()", asFUNCTION(glhckObjectGetMaterial), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectMethod("Object", "void set_parent(Object@)", asFUNCTION(glhckObjectAddChild), asCALL_CDECL_OBJLAST);
   engine->RegisterObjectMethod("Object", "Object@+ get_parent()", asFUNCTION(glhckObjectParent), asCALL_CDECL_OBJFIRST);
+  //engine->RegisterObjectMethod("Object",  "array<glhck::Object@> getChildren()", asFUNCTION(getObjectChildren), asCALL_CDECL_OBJFIRST);
 
   engine->RegisterGlobalFunction("Object@ createCube(const float)", asFUNCTION(glhckCubeNew), asCALL_CDECL);
   engine->RegisterGlobalFunction("Object@ createSprite(Texture@ texture, const float width, const float height)", asFUNCTION(glhckSpriteNew), asCALL_CDECL);
@@ -155,7 +158,8 @@ int anglhck::registerToEngine(asIScriptEngine *engine)
   engine->RegisterObjectBehaviour("Text", asBEHAVE_ADDREF, "void f()", asFUNCTION(glhckTextRef), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectBehaviour("Text", asBEHAVE_RELEASE, "void f()", asFUNCTION(glhckTextFree), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectMethod("Text", "uint setFont(const string &in)", asFUNCTION(setTextFont), asCALL_CDECL_OBJFIRST);
-  engine->RegisterObjectMethod("Text", "void setColor(const uint8, const uint8, const uint8, const uint8)", asFUNCTION(glhckTextColor), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Text", "void set_color(const Color &in)", asFUNCTION(glhckTextColor), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Text", "const Color& get_color()", asFUNCTION(glhckTextGetColor), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectMethod("Text", "float stash(const uint, const float, const float, const float, const string)", asFUNCTION(stashText), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectMethod("Text", "void draw()", asFUNCTION(glhckTextRender), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectMethod("Text", "void clear()", asFUNCTION(glhckTextClear), asCALL_CDECL_OBJFIRST);
@@ -212,5 +216,29 @@ namespace
   {
     kmVec2* v = static_cast<kmVec2*>(memory);
     *v = {x, y};
+  }
+
+  CScriptArray* getObjectChildren(glhckObject* o)
+  {
+    asIScriptContext* ctx = asGetActiveContext();
+
+    if(ctx != nullptr)
+    {
+      asIScriptEngine* engine = ctx->GetEngine();
+      unsigned int num = 0;
+      glhckObject** childArray = glhckObjectChildren(o, &num);
+      asIObjectType* arrayType = engine->GetObjectTypeById(engine->GetTypeIdByDecl("array<glhck::Object@>"));
+      CScriptArray* children = new CScriptArray(num, arrayType);
+
+      for(unsigned int i = 0; i < num; ++i)
+      {
+        glhckObject* child = childArray[i];
+        children->SetValue(i, child);
+      }
+
+      return children;
+    }
+
+    return nullptr;
   }
 }

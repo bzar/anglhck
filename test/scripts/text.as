@@ -1,7 +1,7 @@
 void main()
 {
   glhck::Text text(512, 128);
-  text.setColor(255, 255, 255, 255);
+  text.color = glhck::Color(192, 128, 28, 255);
   uint font = text.setFont("test/fonts/DejaVuSans.ttf");
 
   double start = time();

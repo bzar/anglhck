@@ -8,7 +8,7 @@ void main()
   textureParameters.magFilter = glhck::FILTER_NEAREST;
   
   glhck::Text text(512, 128);
-  text.setColor(255, 255, 255, 255);
+  text.color = glhck::Color(255, 255, 255, 255);
   uint font = text.setFont("test/fonts/DejaVuSans.ttf");
 
   glhck::Object@ textObject = glhck::createTextObject(text, font, 64, "Hello World!", textureParameters);
