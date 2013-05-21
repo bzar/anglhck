@@ -1,14 +1,7 @@
 void main()
 {
-  glhck::TextureParameters textureParameters = glhck::defaultTextureParameters();
-  textureParameters.wrapS = glhck::WRAP_CLAMP_TO_EDGE;
-  textureParameters.wrapT = glhck::WRAP_CLAMP_TO_EDGE;
-  textureParameters.wrapR = glhck::WRAP_CLAMP_TO_EDGE;
-  textureParameters.minFilter = glhck::FILTER_NEAREST;
-  textureParameters.magFilter = glhck::FILTER_NEAREST;
-
+  glhck::TextureParameters textureParameters = glhck::defaultTextureSpriteParameters();
   glhck::ImportImageParameters imageParameters = glhck::defaultImportImageParameters();
-  
   glhck::Texture tex("test/textures/infantry_1.png", imageParameters, textureParameters);
   glhck::Object@ sprite = glhck::createSprite(tex, 8, 8);
   glhck::Object@ child = glhck::createSprite(tex, 6, 6);
