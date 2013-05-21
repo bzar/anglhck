@@ -44,7 +44,7 @@ int main(int argc, char** argv)
   if (!glhckContextCreate(argc, argv))
      return EXIT_FAILURE;
 
-  if (!glhckDisplayCreate(WIDTH, HEIGHT, GLHCK_RENDER_AUTO))
+  if (!glhckDisplayCreate(WIDTH, HEIGHT, GLHCK_RENDER_OPENGL))
      return EXIT_FAILURE;
 
   run(scriptFile);
