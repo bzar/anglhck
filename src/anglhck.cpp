@@ -12,6 +12,7 @@ namespace
   glhckObject* createTextObject(glhckText *text, unsigned int const font, float const size, std::string const& str, const glhckTextureParameters &parameters);
   float stashText(glhckText *text, unsigned int const font_id, float const size, float const x, float const y, std::string const& s);
   unsigned int setTextFont(glhckText *text, std::string const& filename);
+  unsigned int setTextKakwafont(glhckText *text);
 
   void createColor(void* memory, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
   void createVec3(void* memory, float x, float y, float z);
@@ -93,6 +94,7 @@ int anglhck::registerToEngine(asIScriptEngine *engine)
   engine->RegisterObjectProperty("TextureParameters", "TextureCompareFunc compareFunc", asOFFSET(glhckTextureParameters, compareFunc));
   engine->RegisterObjectProperty("TextureParameters", "int8 mipmap", asOFFSET(glhckTextureParameters, mipmap));
   engine->RegisterGlobalFunction("const TextureParameters& defaultTextureParameters()", asFUNCTION(glhckTextureDefaultParameters), asCALL_CDECL);
+  engine->RegisterGlobalFunction("const TextureParameters& defaultTextureSpriteParameters()", asFUNCTION(glhckTextureDefaultSpriteParameters), asCALL_CDECL);
 
   engine->RegisterObjectType("Texture", 0, asOBJ_REF);
   engine->RegisterObjectBehaviour("Texture", asBEHAVE_FACTORY, "Texture@ f(const string &in, const ImportImageParameters &in, const TextureParameters &in)", asFUNCTION(createTexture), asCALL_CDECL);
@@ -159,6 +161,7 @@ int anglhck::registerToEngine(asIScriptEngine *engine)
   engine->RegisterObjectBehaviour("Text", asBEHAVE_ADDREF, "void f()", asFUNCTION(glhckTextRef), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectBehaviour("Text", asBEHAVE_RELEASE, "void f()", asFUNCTION(glhckTextFree), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectMethod("Text", "uint setFont(const string &in)", asFUNCTION(setTextFont), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Text", "uint setKakwafont(void)", asFUNCTION(setTextKakwafont), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectMethod("Text", "void set_color(const Color &in)", asFUNCTION(glhckTextColor), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectMethod("Text", "const Color& get_color()", asFUNCTION(glhckTextGetColor), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectMethod("Text", "float stash(const uint, const float, const float, const float, const string)", asFUNCTION(stashText), asCALL_CDECL_OBJFIRST);
@@ -176,7 +179,7 @@ namespace
 {
   glhckTexture* createTexture(std::string const& filename, const glhckImportImageParameters &importParameters, const glhckTextureParameters &parameters)
   {
-    return glhckTextureNew(filename.data(), &importParameters, &parameters);
+    return glhckTextureNewFromFile(filename.data(), &importParameters, &parameters);
   }
 
   glhckObject* createModel(std::string const& filename, float const size, const glhckImportModelParameters &params)
@@ -198,7 +201,12 @@ namespace
 
   unsigned int setTextFont(glhckText *text, std::string const& filename)
   {
-    return glhckTextNewFont(text, filename.data());
+    return glhckTextFontNew(text, filename.data());
+  }
+
+  unsigned int setTextKakwafont(glhckText *text)
+  {
+    return glhckTextFontNewKakwafont(text, nullptr);
   }
 
   void createColor(void* memory, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
