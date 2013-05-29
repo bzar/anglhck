@@ -10,6 +10,14 @@ include_directories(
   ${anglhck_SOURCE_DIR}/include
 )
 
+add_subdirectory(lib)
+
+include_directories(
+  ${consolehck_SOURCE_DIR}/include
+)
+
+add_library(utf8 utf8.c)
+
 add_executable(simple
     simple.cpp
     ${AS_ADDONS}/scriptbuilder/scriptbuilder.cpp
@@ -24,8 +32,9 @@ add_executable(anglhck_run
     ${AS_ADDONS}/scripthandle/scripthandle.cpp
     ${AS_ADDONS}/scriptstdstring/scriptstdstring.cpp
     ${AS_ADDONS}/scriptarray/scriptarray.cpp
+    ${AS_ADDONS}/scripthelper/scripthelper.cpp
 )
-target_link_libraries(anglhck_run anglhck glfw ${GLFW_LIBRARIES})
+target_link_libraries(anglhck_run anglhck consolehck utf8 glfw ${GLFW_LIBRARIES})
 
 
 file(COPY scripts DESTINATION .)
