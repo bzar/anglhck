@@ -125,7 +125,7 @@ consolehckContinue angelscriptConsoleCallback(consolehckConsole* console, unsign
 consolehckConsole* createAngelscriptConsole()
 {
   consolehckConsole* console = consolehckConsoleNew(WIDTH, HEIGHT/2);
-  glhckObjectPositionf(console->object, WIDTH/2, 3*HEIGHT/4, 0);
+  glhckObjectPositionf(console->object, WIDTH/2, HEIGHT/4, 0);
   consolehckConsoleUpdate(console);
   consolehckConsoleInputCallbackRegister(console, angelscriptConsoleCallback);
 
@@ -253,14 +253,9 @@ void swap()
     Context* context = static_cast<Context*>(ctx->GetEngine()->GetUserData());
     if(context->consoleVisible)
     {
-      kmMat4 currentView = *glhckRenderGetView();
-      kmMat4 currentProjection = *glhckRenderGetProjection();
-      kmMat4 ortho;
-      kmMat4OrthographicProjection(&ortho, 0, WIDTH, 0, HEIGHT, -1, 1);
-      glhckRenderProjectionOnly(&ortho);
+      glhckRenderStatePush2D(WIDTH, HEIGHT, -1, 1);
       glhckObjectRender(context->console->object);
-      glhckRenderView(&currentView);
-      glhckRenderProjection(&currentProjection);
+      glhckRenderStatePop();
     }
   }
 
