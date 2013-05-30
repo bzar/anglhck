@@ -101,7 +101,7 @@ consolehckContinue angelscriptConsoleCallback(consolehckConsole* console, unsign
   asIScriptContext* ctx = asGetActiveContext();
 
   unsigned int encodedLength = utf8EncodedStringLength(input);
-  char* code = new char[encodedLength];
+  char* code = static_cast<char*>(calloc(encodedLength, 1));
   utf8EncodeString(input, code);
 
   if(ctx)
@@ -114,7 +114,7 @@ consolehckContinue angelscriptConsoleCallback(consolehckConsole* console, unsign
     }
   }
 
-  delete[] code;
+  free(code);
 
   consolehckConsoleInputClear(console);
   consolehckConsoleUpdate(console);
