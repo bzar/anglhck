@@ -9,6 +9,7 @@ void main()
   
   @child.parent = sprite;
   @child2.parent = child;
+  child2.parentAffection = glhck::AFFECT_TRANSLATION | glhck::AFFECT_ROTATION | glhck::AFFECT_SCALING;
 
   child.position = glhck::Vec3(10, 0, 0);
   child2.position = glhck::Vec3(10, 0, 0);
@@ -25,6 +26,7 @@ void main()
     float t = current - start;
     sprite.rotation = glhck::Vec3(0, 0, t*360/3);
     child.rotation = glhck::Vec3(0, 0, t*360/2);
+    child.scale = glhck::Vec3(1.0/t+1.0, 1.0/t+1.0, 1.0);
     
     sprite.draw();
     sprite.children[0].draw();
