@@ -126,6 +126,12 @@ int anglhck::registerToEngine(asIScriptEngine *engine)
   engine->RegisterObjectMethod("Material", "void set_textureOffset(const Vec2 &in)", asFUNCTION(glhckMaterialTextureOffset), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectMethod("Material", "const Vec2& get_textureOffset()", asFUNCTION(glhckMaterialGetTextureOffset), asCALL_CDECL_OBJFIRST);
 
+  engine->RegisterEnum("ObjectAffectionFlags");
+  engine->RegisterEnumValue("ObjectAffectionFlags", "AFFECT_NONE", GLHCK_AFFECT_NONE);
+  engine->RegisterEnumValue("ObjectAffectionFlags", "AFFECT_TRANSLATION", GLHCK_AFFECT_TRANSLATION);
+  engine->RegisterEnumValue("ObjectAffectionFlags", "AFFECT_ROTATION", GLHCK_AFFECT_ROTATION);
+  engine->RegisterEnumValue("ObjectAffectionFlags", "AFFECT_SCALING", GLHCK_AFFECT_SCALING);
+
   engine->RegisterObjectType("Object", 0, asOBJ_REF);
   engine->RegisterObjectBehaviour("Object", asBEHAVE_ADDREF, "void f()", asFUNCTION(glhckObjectRef), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectBehaviour("Object", asBEHAVE_RELEASE, "void f()", asFUNCTION(glhckObjectFree), asCALL_CDECL_OBJFIRST);
@@ -144,6 +150,8 @@ int anglhck::registerToEngine(asIScriptEngine *engine)
   engine->RegisterObjectMethod("Object", "void set_parent(Object@)", asFUNCTION(glhckObjectAddChild), asCALL_CDECL_OBJLAST);
   engine->RegisterObjectMethod("Object", "Object@+ get_parent()", asFUNCTION(glhckObjectParent), asCALL_CDECL_OBJFIRST);
   engine->RegisterObjectMethod("Object",  "array<glhck::Object@>@ get_children()", asFUNCTION(getObjectChildren), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Object", "void set_parentAffection(uint8)", asFUNCTION(glhckObjectParentAffection), asCALL_CDECL_OBJFIRST);
+  engine->RegisterObjectMethod("Object", "uint8 get_parentAffection()", asFUNCTION(glhckObjectGetParentAffection), asCALL_CDECL_OBJFIRST);
 
   engine->RegisterGlobalFunction("Object@ createCube(const float)", asFUNCTION(glhckCubeNew), asCALL_CDECL);
   engine->RegisterGlobalFunction("Object@ createSprite(Texture@ texture, const float width, const float height)", asFUNCTION(glhckSpriteNew), asCALL_CDECL);
